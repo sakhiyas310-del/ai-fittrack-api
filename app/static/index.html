@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI FitTrack</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1c2430;--muted:#66707d;--line:#e2e6ec;--accent:#0f766e;--on-accent:#fff;--soft:#ccfbf1;--danger:#b42318}
+@media(prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1a2028;--text:#e8ecf1;--muted:#98a2b0;--line:#2a323d;--accent:#2dd4bf;--on-accent:#04201d;--soft:#123b38;--danger:#f97066}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+h1{font-size:1.3rem;margin:0}h2{font-size:1.05rem;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:16px}
+.tabs button{flex:1;white-space:nowrap;background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:flex;flex-direction:column;font-size:.85rem;color:var(--muted);gap:4px}
+.full{grid-column:1/-1}
+input,select,textarea{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
+button.primary{background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
+button.link{background:none;border:0;color:var(--accent);cursor:pointer;font:inherit;padding:0}
+button.del{color:var(--danger)}
+.item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}.muted{color:var(--muted);font-size:.85rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;margin-bottom:12px}
+.stat{background:var(--soft);border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:1.2rem}
+.badge{display:inline-block;background:var(--soft);color:var(--text);border-radius:99px;padding:2px 10px;font-size:.8rem;margin-bottom:12px}
+.day{border-top:1px solid var(--line);padding:10px 0}.day:first-of-type{border-top:0}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--danger);color:#fff;padding:10px 16px;border-radius:8px;display:none;max-width:90%}
+.hide{display:none}
+@media(max-width:520px){form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AI FitTrack</h1>
+    <div id="who" class="muted"></div>
+  </header>
+
+  <!-- Step 1: create or load a profile -->
+  <section id="welcome" class="hide">
+    <div class="card">
+      <h2>Log in</h2>
+      <form id="f-login">
+        <label>Email<input name="email" type="email" required></label>
+        <label>Password<input name="password" type="password" required></label>
+        <button class="primary full">Log in</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>New here? Create your account</h2>
+      <form id="f-user">
+        <label class="full">Name<input name="name" required maxlength="100"></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Password (6+ characters)<input name="password" type="password" minlength="6" required></label>
+        <label>Age<input name="age" type="number" min="1" step="1" required></label>
+        <label>Workout days / week<input name="workout_days_per_week" type="number" min="1" max="7" step="1" required></label>
+        <label>Height (cm)<input name="height_cm" type="number" min="1" step="any" required></label>
+        <label>Weight (kg)<input name="weight_kg" type="number" min="1" step="any" required></label>
+        <label>Goal<select name="fitness_goal">
+          <option value="build_muscle">Build muscle</option><option value="lose_weight">Lose weight</option>
+          <option value="endurance">Endurance</option><option value="general_fitness">General fitness</option></select></label>
+        <label>Experience<select name="experience_level">
+          <option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
+        <button class="primary full">Create profile</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Step 2: the main app -->
+  <section id="app" class="hide">
+    <nav class="tabs" id="tabs">
+      <button data-tab="workouts" class="on">Workouts</button>
+      <button data-tab="meals">Meals</button>
+      <button data-tab="progress">Progress</button>
+      <button data-tab="plan">Plan</button>
+    </nav>
+
+    <div id="t-workouts" class="tab">
+      <div class="card"><h2>Log a workout</h2>
+        <form id="f-workout">
+          <label>Exercise<input name="exercise_name" required></label>
+          <label>Minutes<input name="duration_minutes" type="number" min="1" step="1" required></label>
+          <label>Date<input name="date" type="date" required></label>
+          <label>Notes (optional)<input name="notes"></label>
+          <button class="primary full">Add workout</button>
+        </form></div>
+      <div class="card"><h2>History</h2><div id="l-workouts"></div></div>
+    </div>
+
+    <div id="t-meals" class="tab hide">
+      <div class="card"><h2>Log a meal</h2>
+        <form id="f-meal">
+          <label>Food (pick from list or type)<input name="food_name" list="foods" required autocomplete="off"></label><datalist id="foods"></datalist>
+          <label>Calories (approx.)<input name="calories" type="number" min="1" step="1" required></label>
+          <label>Date<input name="date" type="date" required></label>
+          <label>Notes (optional)<input name="notes"></label>
+          <button class="primary full">Add meal</button>
+        </form></div>
+      <div class="card"><h2>History <span id="today-cal" class="muted"></span></h2><div id="l-meals"></div></div>
+    </div>
+
+    <div id="t-progress" class="tab hide">
+      <div class="card"><h2>Record your weight</h2>
+        <form id="f-weight">
+          <label>Weight (kg)<input name="weight_kg" type="number" min="1" step="any" required></label>
+          <label>Date<input name="date" type="date" required></label>
+          <button class="primary full">Save weight</button>
+        </form></div>
+      <div class="card"><h2>Progress</h2><div id="progress"></div></div>
+    </div>
+
+    <div id="t-plan" class="tab hide">
+      <div class="card"><h2>Weekly workout plan</h2>
+        <p class="muted">Built from your profile and goal.</p>
+        <button class="primary" id="gen">Generate plan</button>
+        <div id="plan" style="margin-top:16px"></div></div>
+    </div>
+  </section>
+</div>
+<div id="toast"></div>
+
+<script>
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let user = null, token = localStorage.getItem('fittrack_token');
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 4000);
+}
+
+// Talks to the Flask API. Throws an Error with the API's own message if something is wrong.
+async function api(path, method = 'GET', body) {
+  const res = await fetch('/api' + path, {
+    method, headers: {'Content-Type': 'application/json', ...(token ? {Authorization: 'Bearer ' + token} : {})},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const json = await res.json().catch(() => ({success: false, error: 'Server error'}));
+  if (!json.success) throw new Error(json.error || 'Something went wrong');
+  return json.data;
+}
+
+// Reads a form into an object; number inputs become real numbers, empty optional fields are dropped.
+function formData(form) {
+  const out = {};
+  for (const el of form.elements) {
+    if (!el.name || el.value === '') continue;
+    out[el.name] = el.type === 'number' ? Number(el.value) : el.value;
+  }
+  return out;
+}
+
+// Runs an async action and shows any error as a red message.
+const safe = fn => async e => { e.preventDefault(); try { await fn(e.target); } catch (err) { toast(err.message); } };
+
+// ---------- profile ----------
+async function enter(u) {
+  user = u; localStorage.setItem('fittrack_user_id', u.id);
+  $('#who').innerHTML = `${esc(u.name)} (ID ${u.id}) · <button class="link" id="switch">Log out</button>`;
+  $('#switch').onclick = () => { localStorage.clear(); location.reload(); };
+  $('#welcome').classList.add('hide'); $('#app').classList.remove('hide');
+  document.querySelectorAll('input[type=date]').forEach(i => i.value = today());
+  refresh();
+}
+
+// Sign up and log in both return { user, token }
+function signedIn(d) { token = d.token; localStorage.setItem('fittrack_token', token); return enter(d.user); }
+$('#f-user').onsubmit = safe(async f => signedIn(await api('/users', 'POST', formData(f))));
+$('#f-login').onsubmit = safe(async f => signedIn(await api('/auth/login', 'POST', formData(f))));
+
+// ---------- tabs ----------
+$('#tabs').onclick = e => {
+  const tab = e.target.dataset.tab; if (!tab) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === e.target));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('hide', t.id !== 't-' + tab));
+};
+
+// ---------- lists ----------
+const row = (title, right, sub, del = '') =>
+  `<div class="item"><div><b>${esc(title)}</b><div class="muted">${esc(sub)}</div></div><div style="text-align:right">${esc(right)}${del}</div></div>`;
+const delBtn = (kind, id) => `<br><button class="link del" data-kind="${kind}" data-id="${id}">Delete</button>`;
+
+// Approximate calories for common foods (picking one fills the calories box)
+const FOODS = {'Idli (2 pieces)':130,'Dosa (1 plain)':150,'Vada (1)':150,'Pongal (1 bowl)':300,'Upma (1 bowl)':250,
+  'Poori (2)':300,'Chapati (1)':100,'Parotta (1)':260,'Plain rice (1 cup)':200,'Curd rice (1 cup)':250,
+  'Sambar (1 bowl)':100,'Half veg meal':500,'Full veg meal':700,'Chicken curry (1 bowl)':250,'Chicken biryani (1 plate)':550,
+  'Sundal (1 bowl)':150,'Egg (boiled, 1)':80,'Banana (1)':100,'Filter coffee':80,'Tea with milk and sugar':70};
+$('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${n}">`).join('');
+$('#f-meal').elements.food_name.addEventListener('input', e => {
+  if (FOODS[e.target.value]) $('#f-meal').elements.calories.value = FOODS[e.target.value];
+});
+
+// Delete buttons (works for both workouts and meals)
+document.addEventListener('click', async e => {
+  const b = e.target.closest('.del'); if (!b) return;
+  if (!confirm('Delete this entry?')) return;
+  try { await api(`/users/${user.id}/${b.dataset.kind}/${b.dataset.id}`, 'DELETE'); await refresh(); }
+  catch (err) { toast(err.message); }
+});
+
+async function refresh() {
+  const id = user.id;
+  const [w, m, p] = await Promise.all([api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`)]);
+
+  $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
+  $('#l-meals').innerHTML = m.map(x => row(x.food_name, x.calories + ' kcal', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('meals', x.id))).join('') || '<p class="muted">No meals yet.</p>';
+  const kcal = m.filter(x => x.date === today()).reduce((s, x) => s + x.calories, 0);
+  $('#today-cal').textContent = `· today: ${kcal} kcal`;
+
+  const s = p.summary, sign = s.change_kg > 0 ? '+' : '';
+  const bmi = (s.current_weight_kg / (user.height_cm / 100) ** 2).toFixed(1);
+  const cat = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
+  $('#progress').innerHTML = `
+    <div class="stats">
+      <div class="stat"><b>${s.starting_weight_kg ?? '–'}</b>Start (kg)</div>
+      <div class="stat"><b>${s.current_weight_kg}</b>Now (kg)</div>
+      <div class="stat"><b>${sign}${s.change_kg}</b>Change (kg)</div>
+      <div class="stat"><b>${bmi}</b>BMI · ${cat}</div>
+    </div>${chart(p.history)}
+    ${p.history.slice().reverse().map(x => row(x.weight_kg + ' kg', '', x.date)).join('')}`;
+}
+
+// Small line chart drawn with SVG
+function chart(h) {
+  if (h.length < 2) return '<p class="muted">Add at least two weight entries to see a chart.</p>';
+  const ws = h.map(x => x.weight_kg), lo = Math.min(...ws), hi = Math.max(...ws), span = hi - lo || 1;
+  const pts = h.map((x, i) => `${20 + i * 360 / (h.length - 1)},${110 - (x.weight_kg - lo) / span * 90}`).join(' ');
+  return `<svg viewBox="0 0 400 130" style="width:100%;margin-bottom:8px"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="3"/></svg>`;
+}
+
+// ---------- forms ----------
+const submitTo = (path, after) => safe(async f => {
+  await api(`/users/${user.id}/${path}`, 'POST', formData(f));
+  f.reset(); f.querySelectorAll('input[type=date]').forEach(i => i.value = today());
+  await refresh(); if (after) after();
+});
+$('#f-workout').onsubmit = submitTo('workouts');
+$('#f-meal').onsubmit = submitTo('meals');
+$('#f-weight').onsubmit = submitTo('weight');
+
+// ---------- workout plan ----------
+$('#gen').onclick = async () => {
+  $('#gen').disabled = true; $('#gen').textContent = 'Generating…';
+  try {
+    const d = await api(`/users/${user.id}/workout-plan`, 'POST');
+    const label = d.is_ai_generated ? 'AI-generated plan' : 'Sample plan (no AI provider configured)';
+    $('#plan').innerHTML = `<span class="badge">${label}</span>` + d.plan.days.map(day => `
+      <div class="day"><b>${esc(day.day)}</b> · ${esc(day.focus)}
+      ${day.exercises.map(x => `<div class="muted">${esc(x.name)} — ${esc(x.sets)} × ${esc(x.reps)}</div>`).join('')}</div>`).join('');
+  } catch (err) { toast(err.message); }
+  $('#gen').disabled = false; $('#gen').textContent = 'Generate plan';
+};
+
+// ---------- start ----------
+(async () => {
+  const saved = localStorage.getItem('fittrack_user_id');
+  if (saved) { try { return await enter(await api('/users/' + saved)); } catch (e) { localStorage.clear(); } }
+  $('#welcome').classList.remove('hide');
+})();
+</script>
+</body>
+</html>
