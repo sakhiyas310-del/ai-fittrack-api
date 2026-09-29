@@ -102,9 +102,14 @@ button.del{color:var(--danger)}
           <label>Notes (optional)<input name="notes"></label>
           <button class="primary full">Add meal</button>
         </form></div>
-      <div class="card"><h2>Food ideas for your goal</h2>
-        <p id="food-recommendations" class="muted"></p>
-        <p class="muted">These are general meal ideas. Adjust for allergies, dietary needs, or advice from your healthcare professional.</p>
+      <div class="card"><h2>Generate a full-day food plan</h2>
+        <p class="muted">Tell us your food preferences, cuisine, and ingredients to avoid.</p>
+        <form id="f-meal-plan">
+          <label class="full">Your instructions<textarea name="instructions" rows="3" maxlength="1000" placeholder="Example: South Indian vegetarian, no eggs; include idli and avoid peanuts." required></textarea></label>
+          <button class="primary full">Generate day plan</button>
+        </form>
+        <div id="meal-plan-result" style="margin-top:14px"></div>
+        <p class="muted">General meal ideas only. Check ingredients carefully for allergies or health needs.</p>
       </div>
       <div class="card"><h2>History <span id="today-cal" class="muted"></span></h2><div id="l-meals"></div></div>
     </div>
@@ -181,7 +186,6 @@ const safe = fn => async e => { e.preventDefault(); try { await fn(e.target); } 
 // ---------- profile ----------
 async function enter(u) {
   user = u; localStorage.setItem('fittrack_user_id', u.id);
-  $('#food-recommendations').textContent = FOOD_IDEAS[user.fitness_goal] || FOOD_IDEAS.general_fitness;
   $('#who').innerHTML = `${esc(u.name)} (ID ${u.id}) · <button class="link" id="switch">Log out</button>`;
   $('#switch').onclick = () => { localStorage.clear(); location.reload(); };
   $('#welcome').classList.add('hide'); $('#app').classList.remove('hide');
@@ -211,12 +215,6 @@ const FOODS = {'Idli (2 pieces)':130,'Dosa (1 plain)':150,'Vada (1)':150,'Pongal
   'Poori (2)':300,'Chapati (1)':100,'Parotta (1)':260,'Plain rice (1 cup)':200,'Curd rice (1 cup)':250,
   'Sambar (1 bowl)':100,'Half veg meal':500,'Full veg meal':700,'Chicken curry (1 bowl)':250,'Chicken biryani (1 plate)':550,
   'Sundal (1 bowl)':150,'Egg (boiled, 1)':80,'Banana (1)':100,'Filter coffee':80,'Tea with milk and sugar':70};
-const FOOD_IDEAS = {
-  lose_weight: 'Try meal ideas such as idli with sambar, sundal with vegetables, or eggs with vegetables. Choose portions that suit you.',
-  build_muscle: 'Try pairing rice or chapati with protein foods such as dal, eggs, paneer, curd, or chicken, plus vegetables.',
-  endurance: 'Try familiar carbohydrate foods such as idli, rice, or banana alongside dal, eggs, or curd, plus vegetables.',
-  general_fitness: 'Aim for varied meals with rice or chapati, dal or another protein food, vegetables, and fruit.'
-};
 $('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${n}">`).join('');
 $('#f-meal').elements.food_name.addEventListener('input', e => {
   if (FOODS[e.target.value]) $('#f-meal').elements.calories.value = FOODS[e.target.value];
@@ -275,6 +273,17 @@ $('#f-workout').onsubmit = submitTo('workouts');
 $('#f-meal').onsubmit = submitTo('meals');
 $('#f-water').onsubmit = submitTo('water');
 $('#f-weight').onsubmit = submitTo('weight');
+$('#f-meal-plan').onsubmit = safe(async f => {
+  const button = f.querySelector('button');
+  button.disabled = true; button.textContent = 'Generating…';
+  try {
+    const result = await api(`/users/${user.id}/meal-plan`, 'POST', formData(f));
+    const label = result.is_ai_generated ? 'AI plan from your instructions' : 'Sample plan (AI provider not configured)';
+    $('#meal-plan-result').innerHTML = `<span class="badge">${label}</span>` +
+      result.plan.meals.map(meal => `<div class="day"><b>${esc(meal.time)}</b><div>${esc(meal.name)}</div><div class="muted">${esc(meal.description || '')}</div></div>`).join('') +
+      `<p class="muted">${esc(result.plan.note || '')}</p>`;
+  } finally { button.disabled = false; button.textContent = 'Generate day plan'; }
+});
 
 // ---------- workout plan ----------
 $('#gen').onclick = async () => {

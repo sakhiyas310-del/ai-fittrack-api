@@ -15,6 +15,7 @@ one small, readable codebase.
 - **Meal tracking** — log meals, view full history, and see today's calorie total
 - **Water tracking** — log water servings in millilitres and view today's total
 - **Goal-based food ideas** — show general meal ideas matched to the profile goal
+- **Instruction-based daily meal plan** — generate five meal ideas from food preferences; uses the AI provider when configured
 - **Progress tracking** — log weight over time, see a start/current/change summary, and calculate BMI
 - **AI workout plan** — generates a personalized weekly plan; if no AI provider is configured (or the AI call fails), it automatically falls back to a clearly-labeled sample plan instead of erroring out
 - Input validation, consistent JSON response shape, and clear error messages on every endpoint
@@ -310,6 +311,25 @@ Request body:
 Use `GET /api/users/{id}/water` to view water history or
 `DELETE /api/users/{id}/water/{entry_id}` to remove an entry. The app shows
 the amount logged today and does not prescribe a daily water target.
+
+---
+
+### Generate a full-day meal plan
+
+`POST /api/users/{id}/meal-plan`
+
+Request body:
+```json
+{
+  "instructions": "South Indian vegetarian, no eggs; include idli and avoid peanuts."
+}
+```
+
+The response includes breakfast, snacks, lunch, and dinner. With
+`ANTHROPIC_API_KEY` configured, the plan follows the submitted instructions
+using the AI provider. Without it, the app labels and returns a limited sample
+plan; the fallback only recognizes common vegetarian/non-vegetarian and egg
+preferences.
 
 ---
 
