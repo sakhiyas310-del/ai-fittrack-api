@@ -39,6 +39,7 @@ def create_app():
     from app.routes.meals import meals_bp
     from app.routes.progress import progress_bp
     from app.routes.workout_plan import workout_plan_bp
+    from app.routes.water import water_bp
 
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
@@ -47,6 +48,7 @@ def create_app():
     app.register_blueprint(meals_bp)
     app.register_blueprint(progress_bp)
     app.register_blueprint(workout_plan_bp)
+    app.register_blueprint(water_bp)
 
     # ---- Login check: every /api/users/<id>/... route needs the owner's token ----
     @app.before_request

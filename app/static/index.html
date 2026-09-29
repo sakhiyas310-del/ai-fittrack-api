@@ -76,6 +76,7 @@ button.del{color:var(--danger)}
     <nav class="tabs" id="tabs">
       <button data-tab="workouts" class="on">Workouts</button>
       <button data-tab="meals">Meals</button>
+      <button data-tab="water">Water</button>
       <button data-tab="progress">Progress</button>
       <button data-tab="plan">Plan</button>
     </nav>
@@ -101,7 +102,24 @@ button.del{color:var(--danger)}
           <label>Notes (optional)<input name="notes"></label>
           <button class="primary full">Add meal</button>
         </form></div>
+      <div class="card"><h2>Food ideas for your goal</h2>
+        <p id="food-recommendations" class="muted"></p>
+        <p class="muted">These are general meal ideas. Adjust for allergies, dietary needs, or advice from your healthcare professional.</p>
+      </div>
       <div class="card"><h2>History <span id="today-cal" class="muted"></span></h2><div id="l-meals"></div></div>
+    </div>
+
+    <div id="t-water" class="tab hide">
+      <div class="card"><h2>Log water</h2>
+        <p id="today-water" class="muted">Today: 0 ml logged</p>
+        <form id="f-water">
+          <label>Amount (ml)<input name="amount_ml" type="number" min="1" step="1" required></label>
+          <label>Date<input name="date" type="date" required></label>
+          <label class="full">Notes (optional)<input name="notes"></label>
+          <button class="primary full">Add water</button>
+        </form>
+      </div>
+      <div class="card"><h2>Water history</h2><div id="l-water"></div></div>
     </div>
 
     <div id="t-progress" class="tab hide">
@@ -163,6 +181,7 @@ const safe = fn => async e => { e.preventDefault(); try { await fn(e.target); } 
 // ---------- profile ----------
 async function enter(u) {
   user = u; localStorage.setItem('fittrack_user_id', u.id);
+  $('#food-recommendations').textContent = FOOD_IDEAS[user.fitness_goal] || FOOD_IDEAS.general_fitness;
   $('#who').innerHTML = `${esc(u.name)} (ID ${u.id}) · <button class="link" id="switch">Log out</button>`;
   $('#switch').onclick = () => { localStorage.clear(); location.reload(); };
   $('#welcome').classList.add('hide'); $('#app').classList.remove('hide');
@@ -192,6 +211,12 @@ const FOODS = {'Idli (2 pieces)':130,'Dosa (1 plain)':150,'Vada (1)':150,'Pongal
   'Poori (2)':300,'Chapati (1)':100,'Parotta (1)':260,'Plain rice (1 cup)':200,'Curd rice (1 cup)':250,
   'Sambar (1 bowl)':100,'Half veg meal':500,'Full veg meal':700,'Chicken curry (1 bowl)':250,'Chicken biryani (1 plate)':550,
   'Sundal (1 bowl)':150,'Egg (boiled, 1)':80,'Banana (1)':100,'Filter coffee':80,'Tea with milk and sugar':70};
+const FOOD_IDEAS = {
+  lose_weight: 'Try meal ideas such as idli with sambar, sundal with vegetables, or eggs with vegetables. Choose portions that suit you.',
+  build_muscle: 'Try pairing rice or chapati with protein foods such as dal, eggs, paneer, curd, or chicken, plus vegetables.',
+  endurance: 'Try familiar carbohydrate foods such as idli, rice, or banana alongside dal, eggs, or curd, plus vegetables.',
+  general_fitness: 'Aim for varied meals with rice or chapati, dal or another protein food, vegetables, and fruit.'
+};
 $('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${n}">`).join('');
 $('#f-meal').elements.food_name.addEventListener('input', e => {
   if (FOODS[e.target.value]) $('#f-meal').elements.calories.value = FOODS[e.target.value];
@@ -207,12 +232,17 @@ document.addEventListener('click', async e => {
 
 async function refresh() {
   const id = user.id;
-  const [w, m, p] = await Promise.all([api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`)]);
+  const [w, m, p, water] = await Promise.all([
+    api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`), api(`/users/${id}/water`)
+  ]);
 
   $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
   $('#l-meals').innerHTML = m.map(x => row(x.food_name, x.calories + ' kcal', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('meals', x.id))).join('') || '<p class="muted">No meals yet.</p>';
   const kcal = m.filter(x => x.date === today()).reduce((s, x) => s + x.calories, 0);
   $('#today-cal').textContent = `· today: ${kcal} kcal`;
+  const waterToday = water.filter(x => x.date === today()).reduce((s, x) => s + x.amount_ml, 0);
+  $('#today-water').textContent = `Today: ${waterToday} ml logged`;
+  $('#l-water').innerHTML = water.map(x => row(x.amount_ml + ' ml', '', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('water', x.id))).join('') || '<p class="muted">No water entries yet.</p>';
 
   const s = p.summary, sign = s.change_kg > 0 ? '+' : '';
   const bmi = (s.current_weight_kg / (user.height_cm / 100) ** 2).toFixed(1);
@@ -243,6 +273,7 @@ const submitTo = (path, after) => safe(async f => {
 });
 $('#f-workout').onsubmit = submitTo('workouts');
 $('#f-meal').onsubmit = submitTo('meals');
+$('#f-water').onsubmit = submitTo('water');
 $('#f-weight').onsubmit = submitTo('weight');
 
 // ---------- workout plan ----------

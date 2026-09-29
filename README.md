@@ -12,8 +12,10 @@ one small, readable codebase.
 
 - **User profiles** — name, age, height, weight, fitness goal, experience level, workout days/week
 - **Workout tracking** — log workouts and view full history
-- **Meal tracking** — log meals and view full history
-- **Progress tracking** — log weight over time and see a start/current/change summary
+- **Meal tracking** — log meals, view full history, and see today's calorie total
+- **Water tracking** — log water servings in millilitres and view today's total
+- **Goal-based food ideas** — show general meal ideas matched to the profile goal
+- **Progress tracking** — log weight over time, see a start/current/change summary, and calculate BMI
 - **AI workout plan** — generates a personalized weekly plan; if no AI provider is configured (or the AI call fails), it automatically falls back to a clearly-labeled sample plan instead of erroring out
 - Input validation, consistent JSON response shape, and clear error messages on every endpoint
 
@@ -30,6 +32,7 @@ ai-fittrack-api/
 │   │   ├── users.py         # user profile endpoints
 │   │   ├── workouts.py      # workout tracking endpoints
 │   │   ├── meals.py         # meal tracking endpoints
+│   │   ├── water.py         # water-intake tracking endpoints
 │   │   ├── progress.py      # weight logging + progress endpoints
 │   │   └── workout_plan.py  # AI workout plan endpoint
 │   └── utils/
@@ -288,6 +291,25 @@ Response `200` — most recent first, same list shape as workout history.
 ### Delete a meal
 
 `DELETE /api/users/{id}/meals/{meal_id}` works the same way as deleting a workout.
+
+---
+
+### Log water
+
+`POST /api/users/{id}/water`
+
+Request body:
+```json
+{
+  "amount_ml": 250,
+  "date": "2026-09-29",
+  "notes": "After breakfast"
+}
+```
+
+Use `GET /api/users/{id}/water` to view water history or
+`DELETE /api/users/{id}/water/{entry_id}` to remove an entry. The app shows
+the amount logged today and does not prescribe a daily water target.
 
 ---
 
