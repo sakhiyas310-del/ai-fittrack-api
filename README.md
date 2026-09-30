@@ -12,6 +12,7 @@ one small, readable codebase.
 
 - **User profiles** — name, age, height, weight, fitness goal, experience level, workout days/week
 - **Workout tracking** — log workouts and view full history
+- **Consistency badges** — track weekly workout goals, completed-week streaks, and active-day milestones
 - **Meal tracking** — log meals, view full history, and see today's calorie total
 - **Water tracking** — log water servings in millilitres and view today's total
 - **Goal-based food ideas** — show general meal ideas matched to the profile goal

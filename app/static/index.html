@@ -28,6 +28,8 @@ button.del{color:var(--danger)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;margin-bottom:12px}
 .stat{background:var(--soft);border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:1.2rem}
 .badge{display:inline-block;background:var(--soft);color:var(--text);border-radius:99px;padding:2px 10px;font-size:.8rem;margin-bottom:12px}
+.badge-list{display:flex;flex-wrap:wrap;gap:8px}.achievement{border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:.8rem}.achievement.unlocked{background:var(--soft)}.achievement.locked{opacity:.5}
+.progress-track{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 12px}.progress-fill{height:100%;background:var(--accent)}
 .day{border-top:1px solid var(--line);padding:10px 0}.day:first-of-type{border-top:0}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--danger);color:#fff;padding:10px 16px;border-radius:8px;display:none;max-width:90%}
 .hide{display:none}
@@ -82,6 +84,7 @@ button.del{color:var(--danger)}
     </nav>
 
     <div id="t-workouts" class="tab">
+      <div class="card"><h2>Weekly consistency &amp; badges</h2><div id="workout-consistency"></div></div>
       <div class="card"><h2>Log a workout</h2>
         <form id="f-workout">
           <label>Exercise<input name="exercise_name" required></label>
@@ -235,6 +238,7 @@ async function refresh() {
   ]);
 
   $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
+  renderConsistency(w);
   $('#l-meals').innerHTML = m.map(x => row(x.food_name, x.calories + ' kcal', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('meals', x.id))).join('') || '<p class="muted">No meals yet.</p>';
   const kcal = m.filter(x => x.date === today()).reduce((s, x) => s + x.calories, 0);
   $('#today-cal').textContent = `· today: ${kcal} kcal`;
@@ -253,6 +257,53 @@ async function refresh() {
       <div class="stat"><b>${bmi}</b>BMI · ${cat}</div>
     </div>${chart(p.history)}
     ${p.history.slice().reverse().map(x => row(x.weight_kg + ' kg', '', x.date)).join('')}`;
+}
+
+function weekKey(dateText) {
+  const date = new Date(`${dateText}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
+  return date.toISOString().slice(0, 10);
+}
+
+function shiftWeek(week, amount) {
+  const date = new Date(`${week}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + amount * 7);
+  return date.toISOString().slice(0, 10);
+}
+
+function renderConsistency(workouts) {
+  const activeDates = [...new Set(workouts.map(x => x.date))];
+  const target = Math.max(1, Number(user.workout_days_per_week) || 3);
+  const thisWeek = weekKey(today());
+  const byWeek = {};
+  activeDates.forEach(date => { const key = weekKey(date); byWeek[key] = (byWeek[key] || 0) + 1; });
+  const thisWeekCount = byWeek[thisWeek] || 0;
+
+  // An unfinished current week does not break the completed-week streak.
+  let week = thisWeekCount >= target ? thisWeek : shiftWeek(thisWeek, -1);
+  let streak = 0;
+  while (streak < 52 && (byWeek[week] || 0) >= target) {
+    streak += 1;
+    week = shiftWeek(week, -1);
+  }
+
+  const badges = [
+    {label: 'First workout', earned: activeDates.length >= 1},
+    {label: '5 active days', earned: activeDates.length >= 5},
+    {label: '10 active days', earned: activeDates.length >= 10},
+    {label: '25 active days', earned: activeDates.length >= 25},
+    {label: 'Weekly goal reached', earned: thisWeekCount >= target},
+  ];
+  const percent = Math.min(100, Math.round(thisWeekCount / target * 100));
+  $('#workout-consistency').innerHTML = `
+    <div class="stats">
+      <div class="stat"><b>${thisWeekCount}/${target}</b>This week</div>
+      <div class="stat"><b>${streak}</b>Completed weeks in a row</div>
+      <div class="stat"><b>${activeDates.length}</b>Active days total</div>
+    </div>
+    <div class="progress-track" aria-label="Weekly goal progress"><div class="progress-fill" style="width:${percent}%"></div></div>
+    <div class="badge-list">${badges.map(b => `<span class="achievement ${b.earned ? 'unlocked' : 'locked'}">${b.earned ? '🏅' : '🔒'} ${b.label}</span>`).join('')}</div>
+    <p class="muted">Counts workout days against your weekly goal. Rest days are expected.</p>`;
 }
 
 // Small line chart drawn with SVG
