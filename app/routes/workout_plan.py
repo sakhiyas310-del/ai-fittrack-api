@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 from app.db import get_connection
 from app.utils.responses import success_response, error_response
@@ -19,6 +19,17 @@ def create_workout_plan(user_id):
 
     No request body is required; the plan is based on the stored profile.
     """
+    options = request.get_json(silent=True) or {}
+    try:
+        duration_minutes = int(options.get("duration_minutes", 30))
+    except (TypeError, ValueError):
+        return error_response("Choose a workout duration of 20, 30, or 45 minutes.", 400)
+    equipment = options.get("equipment", "bodyweight")
+    if duration_minutes not in (20, 30, 45):
+        return error_response("Choose a workout duration of 20, 30, or 45 minutes.", 400)
+    if equipment not in ("bodyweight", "home", "gym"):
+        return error_response("Choose bodyweight, home equipment, or gym equipment.", 400)
+
     conn = get_connection()
     try:
         user_row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
@@ -28,7 +39,7 @@ def create_workout_plan(user_id):
     if not user_row:
         return error_response(f"User with id {user_id} not found.", 404)
 
-    plan, source = generate_workout_plan(user_row)
+    plan, source = generate_workout_plan(user_row, duration_minutes, equipment)
 
     return success_response(
         {

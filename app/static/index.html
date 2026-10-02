@@ -149,7 +149,13 @@ button.del{color:var(--danger)}
 
     <div id="t-plan" class="tab hide">
       <div class="card"><h2>Weekly workout plan</h2>
-        <p class="muted">Built from your profile and goal.</p>
+        <p class="muted">Your profile and goal are used automatically. Choose your workout time and equipment.</p>
+        <label>Time per workout
+          <select id="plan-duration"><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select>
+        </label>
+        <label>Equipment
+          <select id="plan-equipment"><option value="bodyweight">No equipment</option><option value="home">Dumbbells or resistance band</option><option value="gym">Gym equipment</option></select>
+        </label>
         <button class="primary" id="gen">Generate plan</button>
         <div id="plan" style="margin-top:16px"></div></div>
     </div>
@@ -349,10 +355,13 @@ $('#f-meal-plan').onsubmit = safe(async f => {
 $('#gen').onclick = async () => {
   $('#gen').disabled = true; $('#gen').textContent = 'Generating…';
   try {
-    const d = await api(`/users/${user.id}/workout-plan`, 'POST');
+    const d = await api(`/users/${user.id}/workout-plan`, 'POST', {
+      duration_minutes: Number($('#plan-duration').value),
+      equipment: $('#plan-equipment').value
+    });
     const label = d.is_ai_generated ? 'AI-generated plan' : 'Sample plan (no AI provider configured)';
     $('#plan').innerHTML = `<span class="badge">${label}</span>` + d.plan.days.map(day => `
-      <div class="day"><b>${esc(day.day)}</b> · ${esc(day.focus)}
+      <div class="day"><b>${esc(day.day)}</b> · ${esc(day.focus)}${day.duration_minutes ? ` · ${esc(day.duration_minutes)} min` : ''}
       ${day.exercises.map(x => `<div class="muted">${esc(x.name)} — ${esc(x.sets)} × ${esc(x.reps)}</div>`).join('')}</div>`).join('');
   } catch (err) { toast(err.message); }
   $('#gen').disabled = false; $('#gen').textContent = 'Generate plan';

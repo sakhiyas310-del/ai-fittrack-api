@@ -25,7 +25,7 @@ AI_SYSTEM_PROMPT = (
 )
 
 
-def _build_user_prompt(user):
+def _build_user_prompt(user, duration_minutes, equipment):
     return (
         f"Profile:\n"
         f"- Age: {user['age']}\n"
@@ -34,11 +34,13 @@ def _build_user_prompt(user):
         f"- Goal: {user['fitness_goal']}\n"
         f"- Experience level: {user['experience_level']}\n"
         f"- Workout days per week: {user['workout_days_per_week']}\n"
+        f"- Time per workout: {duration_minutes} minutes\n"
+        f"- Available equipment: {equipment}\n"
         f"Generate a 7-day weekly plan (including rest days)."
     )
 
 
-def _call_ai_provider(user):
+def _call_ai_provider(user, duration_minutes, equipment):
     """
     Calls the Anthropic API to generate a plan. Returns a parsed dict on
     success, or raises an exception on any failure (missing key, network
@@ -54,7 +56,7 @@ def _call_ai_provider(user):
         "model": "claude-sonnet-4-6",
         "max_tokens": 1500,
         "system": AI_SYSTEM_PROMPT,
-        "messages": [{"role": "user", "content": _build_user_prompt(user)}],
+        "messages": [{"role": "user", "content": _build_user_prompt(user, duration_minutes, equipment)}],
     }
     request = urllib.request.Request(
         "https://api.anthropic.com/v1/messages",
@@ -81,7 +83,7 @@ def _call_ai_provider(user):
     return json.loads(text)
 
 
-def _sample_plan(user):
+def _sample_plan(user, duration_minutes=30, equipment="bodyweight"):
     """
     A simple, rule-based fallback plan. Not AI-generated -- used when no
     AI provider is configured or the AI call fails for any reason.
@@ -148,11 +150,41 @@ def _sample_plan(user):
         if i < workout_days_count:
             focus = focuses[focus_index % len(focuses)]
             focus_index += 1
+            exercises = [dict(exercise) for exercise in sample_exercise_sets.get(focus, [])]
+            substitutions = {
+                "bodyweight": {
+                    "Bent-over Rows (light weight/band)": "Superman Holds",
+                    "Bent-over Rows": "Superman Holds",
+                    "Shoulder Press": "Pike Push-ups",
+                    "Bicep Curls": "Towel Isometric Curls",
+                },
+                "home": {
+                    "Bent-over Rows (light weight/band)": "Dumbbell or Band Rows",
+                    "Bent-over Rows": "Dumbbell or Band Rows",
+                    "Shoulder Press": "Dumbbell Shoulder Press",
+                    "Bicep Curls": "Dumbbell or Band Bicep Curls",
+                },
+                "gym": {
+                    "Bodyweight Squats": "Goblet Squat or Leg Press",
+                    "Bent-over Rows (light weight/band)": "Cable or Machine Row",
+                    "Bent-over Rows": "Cable or Machine Row",
+                    "Shoulder Press": "Dumbbell or Machine Shoulder Press",
+                    "Bicep Curls": "Dumbbell or Cable Bicep Curls",
+                    "Tricep Dips": "Cable Tricep Pushdowns",
+                },
+            }
+            for exercise in exercises:
+                exercise["name"] = substitutions[equipment].get(exercise["name"], exercise["name"])
+            if duration_minutes == 20 and len(exercises) > 2:
+                exercises = exercises[:2]
+            elif duration_minutes == 45 and len(exercises) > 0:
+                exercises.append({"name": "Cool-down stretching", "sets": 1, "reps": "5 minutes"})
             days.append(
                 {
                     "day": day_name,
                     "focus": focus,
-                    "exercises": sample_exercise_sets.get(focus, []),
+                    "duration_minutes": duration_minutes,
+                    "exercises": exercises,
                 }
             )
         else:
@@ -161,7 +193,7 @@ def _sample_plan(user):
     return {"days": days}
 
 
-def generate_workout_plan(user):
+def generate_workout_plan(user, duration_minutes=30, equipment="bodyweight"):
     """
     Returns a tuple: (plan_dict, source) where source is "ai" or "sample".
 
@@ -169,9 +201,12 @@ def generate_workout_plan(user):
     falls back to the rule-based sample plan rather than raising.
     """
     try:
-        plan = _call_ai_provider(user)
+        plan = _call_ai_provider(user, duration_minutes, equipment)
         if isinstance(plan, dict) and "days" in plan:
+            for day in plan["days"]:
+                if day.get("focus") != "Rest":
+                    day["duration_minutes"] = duration_minutes
             return plan, "ai"
         raise ValueError("AI response did not match expected format.")
     except Exception:
-        return _sample_plan(user), "sample"
+        return _sample_plan(user, duration_minutes, equipment), "sample"
