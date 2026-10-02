@@ -59,35 +59,54 @@ def _call_ai_provider(user, instructions):
 
 
 def _sample_plan(user, instructions):
-    """Transparent offline fallback; recognizes common veg/non-veg/egg requests."""
+    """Free structured fallback that uses the UI's food, cuisine, and avoid options."""
     text = instructions.lower()
-    vegan = "vegan" in text
-    vegetarian = vegan or any(word in text for word in ("vegetarian", "pure veg", "veg only", "சைவம்"))
-    non_veg = not vegetarian and any(word in text for word in ("non-veg", "non veg", "nonvegetarian", "non-vegetarian", "சைவம் இல்லை"))
-    avoid_egg = any(word in text for word in ("no egg", "avoid egg", "without egg", "egg-free", "egg free"))
+    diet = re.search(r"diet=([^;]+)", text)
+    cuisine = re.search(r"cuisine=([^;]+)", text)
+    avoid = re.search(r"avoid=([^;]+)", text)
+    diet = diet.group(1).strip() if diet else "vegetarian"
+    cuisine = cuisine.group(1).strip() if cuisine else "south_indian"
+    avoid = {item.strip() for item in avoid.group(1).split(",")} if avoid else set()
 
-    meals = [
-        {"time": "Breakfast", "name": "Idli with sambar", "description": "A familiar South Indian breakfast idea."},
-        {"time": "Morning snack", "name": "Seasonal fruit", "description": "Choose a fruit you enjoy."},
-    ]
-    if non_veg:
-        lunch = "Rice with chicken curry and vegetables"
-        dinner = "Chapati with egg curry and vegetables" if not avoid_egg else "Chapati with chicken and vegetables"
-    elif vegan:
-        lunch, dinner = "Rice with dal and vegetables", "Chapati with chickpeas and vegetables"
+    vegan = diet == "vegan"
+    non_veg = diet == "non_vegetarian"
+    north = cuisine == "north_indian"
+    dairy_ok = "dairy" not in avoid and not vegan
+    eggs_ok = "eggs" not in avoid
+    cuisine_label = "North Indian" if north else "South Indian" if cuisine == "south_indian" else "mixed Indian"
+
+    breakfast = "Poha with vegetables" if north else "Idli with sambar" if cuisine == "south_indian" else "Oats with fruit"
+    snack = "Seasonal fruit"
+    if north:
+        lunch = "Roti with chicken curry and vegetables" if non_veg else "Roti with chana and vegetables"
+        if non_veg and eggs_ok:
+            dinner = "Rice with egg curry and vegetables"
+        else:
+            dinner = "Rice with dal and vegetables"
     else:
-        lunch, dinner = "Rice with dal, vegetables, and curd", "Chapati with paneer and vegetables"
-    if vegetarian and avoid_egg:
-        lunch = "Rice with dal, vegetables, and curd" if not vegan else "Rice with dal and vegetables"
-    meals.extend([
-        {"time": "Lunch", "name": lunch, "description": "Adjust ingredients and portions to your needs."},
-        {"time": "Evening snack", "name": "Sundal or roasted chana", "description": "A simple snack idea."},
+        lunch = "Rice with chicken curry and vegetables" if non_veg else "Rice with dal and vegetables"
+        if non_veg and eggs_ok:
+            dinner = "Dosa with egg curry"
+        else:
+            dinner = "Dosa with sambar" if cuisine == "south_indian" else "Chapati with dal and vegetables"
+
+    if not non_veg and dairy_ok:
+        lunch += " and curd"
+        dinner = "Chapati with paneer and vegetables" if north else dinner
+    if "peanuts" in avoid:
+        evening_snack = "Roasted chana (without peanuts)"
+    else:
+        evening_snack = "Roasted chana"
+    meals = [
+        {"time": "Breakfast", "name": breakfast, "description": f"{cuisine_label} meal idea."},
+        {"time": "Morning snack", "name": snack, "description": "Choose a fruit you enjoy."},
+        {"time": "Lunch", "name": lunch, "description": "Adjust portions to your needs."},
+        {"time": "Evening snack", "name": evening_snack, "description": "A simple snack idea."},
         {"time": "Dinner", "name": dinner, "description": "A simple meal idea with vegetables."},
-    ])
+    ]
     note = (
-        "Sample plan: without an AI provider, only common vegetarian, vegan, non-vegetarian, "
-        "and egg preferences are recognized. Detailed instructions or allergies need AI setup "
-        "and careful review. These are general ideas, not medical advice."
+        "Free sample menu based on your selected food type, cuisine, and avoid options. "
+        "Check ingredients carefully for allergies; these are general meal ideas, not medical advice."
     )
     return {"meals": meals, "note": note}
 

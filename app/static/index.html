@@ -30,6 +30,7 @@ button.del{color:var(--danger)}
 .badge{display:inline-block;background:var(--soft);color:var(--text);border-radius:99px;padding:2px 10px;font-size:.8rem;margin-bottom:12px}
 .badge-list{display:flex;flex-wrap:wrap;gap:8px}.achievement{border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:.8rem}.achievement.unlocked{background:var(--soft)}.achievement.locked{opacity:.5}
 .progress-track{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 12px}.progress-fill{height:100%;background:var(--accent)}
+.avoid-options{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:12px}.check-option{display:inline-flex;flex-direction:row;align-items:center;gap:5px}.check-option input{width:auto;padding:0}
 .day{border-top:1px solid var(--line);padding:10px 0}.day:first-of-type{border-top:0}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--danger);color:#fff;padding:10px 16px;border-radius:8px;display:none;max-width:90%}
 .hide{display:none}
@@ -106,9 +107,15 @@ button.del{color:var(--danger)}
           <button class="primary full">Add meal</button>
         </form></div>
       <div class="card"><h2>Generate a full-day food plan</h2>
-        <p class="muted">Tell us your food preferences, cuisine, and ingredients to avoid.</p>
+        <p class="muted">Choose your food type and cuisine. Select any ingredients you want to avoid.</p>
         <form id="f-meal-plan">
-          <label class="full">Your instructions<textarea name="instructions" rows="3" maxlength="1000" placeholder="Example: South Indian vegetarian, no eggs; include idli and avoid peanuts." required></textarea></label>
+          <label>Food type<select name="diet"><option value="vegetarian">Vegetarian</option><option value="non_vegetarian">Non-vegetarian</option><option value="vegan">Vegan</option></select></label>
+          <label>Cuisine<select name="cuisine"><option value="south_indian">South Indian</option><option value="north_indian">North Indian</option><option value="any">Any cuisine</option></select></label>
+          <div class="avoid-options"><span class="muted">Avoid:</span>
+            <label class="check-option"><input type="checkbox" name="avoid" value="eggs"> Eggs</label>
+            <label class="check-option"><input type="checkbox" name="avoid" value="dairy"> Dairy</label>
+            <label class="check-option"><input type="checkbox" name="avoid" value="peanuts"> Peanuts</label>
+          </div>
           <button class="primary full">Generate day plan</button>
         </form>
         <div id="meal-plan-result" style="margin-top:14px"></div>
@@ -328,7 +335,9 @@ $('#f-meal-plan').onsubmit = safe(async f => {
   const button = f.querySelector('button');
   button.disabled = true; button.textContent = 'Generating…';
   try {
-    const result = await api(`/users/${user.id}/meal-plan`, 'POST', formData(f));
+    const avoid = [...f.querySelectorAll('input[name="avoid"]:checked')].map(input => input.value).join(',') || 'none';
+    const instructions = `diet=${f.elements.diet.value}; cuisine=${f.elements.cuisine.value}; avoid=${avoid}`;
+    const result = await api(`/users/${user.id}/meal-plan`, 'POST', {instructions});
     const label = result.is_ai_generated ? 'AI plan from your instructions' : 'Sample plan (AI provider not configured)';
     $('#meal-plan-result').innerHTML = `<span class="badge">${label}</span>` +
       result.plan.meals.map(meal => `<div class="day"><b>${esc(meal.time)}</b><div>${esc(meal.name)}</div><div class="muted">${esc(meal.description || '')}</div></div>`).join('') +
