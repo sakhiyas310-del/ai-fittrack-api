@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS workouts (
     user_id INTEGER NOT NULL,
     exercise_name TEXT NOT NULL,
     duration_minutes INTEGER NOT NULL,
+    reps INTEGER,
     date TEXT NOT NULL,
     notes TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -91,6 +92,9 @@ def init_db():
     conn = get_connection()
     try:
         conn.executescript(SCHEMA)
+        workout_columns = [row["name"] for row in conn.execute("PRAGMA table_info(workouts)")]
+        if "reps" not in workout_columns:
+            conn.execute("ALTER TABLE workouts ADD COLUMN reps INTEGER")
         # Login columns are added separately so databases created by older versions keep working.
         columns = [row["name"] for row in conn.execute("PRAGMA table_info(users)")]
         if "email" not in columns:

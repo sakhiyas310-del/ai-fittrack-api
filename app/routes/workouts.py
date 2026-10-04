@@ -19,6 +19,7 @@ def _row_to_dict(row):
         "user_id": row["user_id"],
         "exercise_name": row["exercise_name"],
         "duration_minutes": row["duration_minutes"],
+        "reps": row["reps"],
         "date": row["date"],
         "notes": row["notes"],
         "created_at": row["created_at"],
@@ -47,6 +48,11 @@ def add_workout(user_id):
         require_fields(data, ["exercise_name", "duration_minutes", "date"])
         exercise_name = validate_string(data["exercise_name"], "exercise_name", max_length=150)
         duration_minutes = validate_positive_number(data["duration_minutes"], "duration_minutes", allow_float=False)
+        reps = data.get("reps")
+        if reps not in (None, ""):
+            reps = validate_positive_number(reps, "reps", allow_float=False)
+        else:
+            reps = None
         workout_date = validate_date(data["date"], "date")
         notes = data.get("notes")
         if notes is not None:
@@ -61,10 +67,10 @@ def add_workout(user_id):
 
         cursor = conn.execute(
             """
-            INSERT INTO workouts (user_id, exercise_name, duration_minutes, date, notes)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO workouts (user_id, exercise_name, duration_minutes, reps, date, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (user_id, exercise_name, duration_minutes, workout_date.isoformat(), notes),
+            (user_id, exercise_name, duration_minutes, reps, workout_date.isoformat(), notes),
         )
         conn.commit()
         row = conn.execute("SELECT * FROM workouts WHERE id = ?", (cursor.lastrowid,)).fetchone()

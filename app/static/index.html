@@ -15,6 +15,7 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{display:flex;flex
 #app>.app-hero,.welcome-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;min-height:255px;padding:30px 36px;border-radius:23px;background:linear-gradient(112deg,#27351e 0%,#1c261c 48%,#18201d 100%);border:1px solid #3b4c31;box-shadow:0 20px 55px #0003}.eyebrow{display:inline-block;color:var(--accent);font-size:.73rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero-copy h2{font-size:clamp(2rem,5vw,3.5rem);line-height:1.04;max-width:560px;margin:12px 0}.hero-copy p{max-width:500px;color:#c1cbbf;margin:0 0 17px}.hero-pills{display:flex;flex-wrap:wrap;gap:8px}.hero-pills span{font-size:.77rem;color:#dce7d5;border:1px solid #53634b;background:#1b251b;border-radius:99px;padding:5px 10px}.hero-art{position:relative;min-height:190px;display:grid;place-items:center}.hero-orbit{width:176px;height:176px;border:1px solid #718b50;border-radius:50%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 40px #c7f36b12,0 0 50px #c7f36b10}.hero-orbit:before,.hero-orbit:after{content:'';position:absolute;border:1px solid #91a86b66;border-radius:50%;inset:17px}.hero-orbit:after{inset:35px;border-style:dashed}.hero-orbit b{font-size:2rem;color:var(--accent);letter-spacing:.12em}.hero-orbit i{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent);top:24px;right:25px}.hero-note{position:absolute;bottom:0;right:0;background:#111712dd;border:1px solid #53634b;border-radius:12px;padding:9px 13px;color:#b8c5b4;font-size:.68rem;letter-spacing:.1em}.hero-note b{display:block;color:var(--accent);font-size:.86rem;letter-spacing:0;margin-top:1px}
 #who{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#171d19;color:#dce5dc;font-size:.82rem}#who .link{border-left:1px solid var(--line);padding-left:9px;color:var(--accent);font-weight:700}
 .card h2{display:flex;align-items:center;gap:10px}.card h2:before{content:'';width:4px;height:20px;border-radius:4px;background:var(--accent);flex:0 0 4px}
+input,select,button.primary,.voice-button{min-height:44px}.voice-tools{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:2px}.voice-button{border:1px solid #526044;border-radius:10px;background:#20291d;color:var(--accent2);padding:8px 12px;font:inherit;font-size:.84rem;font-weight:700;cursor:pointer}.voice-button:hover{border-color:var(--accent);background:#29351e}.voice-button:disabled{opacity:.6;cursor:wait}
 input,select,button.primary{min-height:44px}.hero-orbit:after{animation:orbit 32s linear infinite}@keyframes orbit{to{transform:rotate(360deg)}}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c7f36b99;outline-offset:3px}::selection{background:#c7f36b55;color:var(--text)}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#7f2625;color:#fff;padding:11px 17px;border-radius:11px;display:none;max-width:90%;box-shadow:0 10px 35px #0007;z-index:10}.hide{display:none}
@@ -86,7 +87,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       <div class="card"><h2>Weekly consistency &amp; badges</h2><div id="workout-consistency"></div></div>
       <div class="card"><h2>Log a workout</h2>
         <form id="f-workout">
-          <label>Exercise<input name="exercise_name" required></label>
+          <label class="full">Exercise
+            <input name="exercise_name" required placeholder="e.g. Push-ups">
+            <span class="voice-tools"><button class="voice-button" id="voice-workout" type="button">🎙 Speak workout</button><span id="voice-status" class="muted" aria-live="polite">Try: “I did 10 pushups in 5 minutes”</span></span>
+          </label>
+          <label>Reps (optional)<input name="reps" type="number" min="1" step="1" placeholder="e.g. 10"></label>
           <label>Minutes<input name="duration_minutes" type="number" min="1" step="1" required></label>
           <label>Date<input name="date" type="date" required></label>
           <label>Notes (optional)<input name="notes"></label>
@@ -248,7 +253,7 @@ async function refresh() {
     api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`), api(`/users/${id}/water`)
   ]);
 
-  $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
+  $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min' + (x.reps ? ' · ' + x.reps + ' reps' : ''), x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
   renderConsistency(w);
   $('#l-meals').innerHTML = m.map(x => row(x.food_name, x.calories + ' kcal', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('meals', x.id))).join('') || '<p class="muted">No meals yet.</p>';
   const kcal = m.filter(x => x.date === today()).reduce((s, x) => s + x.calories, 0);
@@ -335,6 +340,53 @@ $('#f-workout').onsubmit = submitTo('workouts');
 $('#f-meal').onsubmit = submitTo('meals');
 $('#f-water').onsubmit = submitTo('water');
 $('#f-weight').onsubmit = submitTo('weight');
+
+const spokenNumbers = {zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20};
+const numberPattern = '(?:\\d+|' + Object.keys(spokenNumbers).join('|') + ')';
+function spokenNumber(value) { return /^\d+$/.test(value) ? Number(value) : spokenNumbers[value.toLowerCase()]; }
+function parseWorkoutSpeech(transcript) {
+  let text = transcript.toLowerCase().replace(/[,.!?]/g, ' ').replace(/\s+/g, ' ').trim();
+  const durationMatch = text.match(new RegExp('\\b(?:in|for)\\s+(' + numberPattern + ')\\s+(?:minutes?|mins?)\\b|\\b(' + numberPattern + ')\\s+(?:minutes?|mins?)\\b', 'i'));
+  const duration = durationMatch ? spokenNumber(durationMatch[1] || durationMatch[2]) : null;
+  if (durationMatch) text = text.replace(durationMatch[0], ' ');
+  text = text.replace(/^(?:i\s+)?(?:have\s+)?(?:just\s+)?(?:did|completed|finished|logged|performed)\s+/i, '')
+    .replace(/\b(today|this morning|this afternoon|this evening)\b/g, '').replace(/\s+/g, ' ').trim();
+  let reps = null;
+  let match = text.match(new RegExp('^(' + numberPattern + ')\\s+(?:reps?\\s+(?:of\\s+)?)?(.+)$', 'i'));
+  if (match) { reps = spokenNumber(match[1]); text = match[2]; }
+  else {
+    match = text.match(new RegExp('^(.+?)\\s+(' + numberPattern + ')\\s+reps?$', 'i'));
+    if (match) { text = match[1]; reps = spokenNumber(match[2]); }
+  }
+  const exercise = text.replace(/^(?:of|for|in)\s+/i, '').replace(/\s+/g, ' ').trim();
+  if (!exercise) throw new Error('Exercise name wasn’t clear. Try saying “I did 10 pushups in 5 minutes”.');
+  return {exercise, reps, duration};
+}
+
+$('#voice-workout').onclick = () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { $('#voice-status').textContent = 'Voice entry needs a supported browser such as Chrome or Edge.'; return; }
+  const button = $('#voice-workout'), status = $('#voice-status');
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-IN'; recognition.interimResults = false; recognition.maxAlternatives = 1;
+  recognition.onstart = () => { button.disabled = true; status.textContent = 'Listening… say your exercise, reps, and time.'; };
+  recognition.onresult = event => {
+    const transcript = event.results[0][0].transcript;
+    try {
+      const result = parseWorkoutSpeech(transcript), form = $('#f-workout');
+      form.elements.exercise_name.value = result.exercise;
+      if (result.reps !== null) form.elements.reps.value = result.reps;
+      if (result.duration !== null) form.elements.duration_minutes.value = result.duration;
+      status.textContent = `Heard: “${transcript}” — review the fields, then tap Add workout.`;
+    } catch (error) { status.textContent = error.message; }
+  };
+  recognition.onerror = event => {
+    status.textContent = event.error === 'not-allowed' ? 'Allow microphone access in your browser, then try again.' : 'Couldn’t hear that clearly. Tap and try once more.';
+  };
+  recognition.onend = () => { button.disabled = false; if (status.textContent === 'Listening… say your exercise, reps, and time.') status.textContent = 'No speech heard. Tap and try again.'; };
+  try { recognition.start(); } catch (_) { button.disabled = false; status.textContent = 'Microphone is busy. Try again in a moment.'; }
+};
+
 $('#f-meal-plan').onsubmit = safe(async f => {
   const button = f.querySelector('button');
   button.disabled = true; button.textContent = 'Generating…';
