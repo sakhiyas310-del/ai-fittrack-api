@@ -17,6 +17,7 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{display:flex;flex
 .card h2{display:flex;align-items:center;gap:10px}.card h2:before{content:'';width:4px;height:20px;border-radius:4px;background:var(--accent);flex:0 0 4px}
 input,select,button.primary,.voice-button{min-height:44px}.voice-tools{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:2px}.voice-button{border:1px solid #526044;border-radius:10px;background:#20291d;color:var(--accent2);padding:8px 12px;font:inherit;font-size:.84rem;font-weight:700;cursor:pointer}.voice-button:hover{border-color:var(--accent);background:#29351e}.voice-button:disabled{opacity:.6;cursor:wait}
 .alternative-result{margin-top:16px}.alternative-option{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.alternative-option:first-child{border-top:0}.alternative-number{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:800}.alternative-option b{display:block;color:var(--text)}
+.coach-card{max-width:850px;margin-inline:auto}.coach-prompts{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.prompt-chip{border:1px solid var(--line);border-radius:999px;background:#202824;color:#dce5dc;padding:8px 12px;font:inherit;font-size:.8rem;cursor:pointer}.prompt-chip:hover{border-color:var(--accent);color:var(--accent2)}.coach-messages{display:flex;flex-direction:column;gap:10px;max-height:390px;overflow-y:auto;padding:15px;background:#111713;border:1px solid var(--line);border-radius:15px;scroll-behavior:smooth}.coach-message{max-width:88%;padding:12px 14px;border-radius:14px;line-height:1.55;overflow-wrap:anywhere}.coach-assistant{align-self:flex-start;background:#222a24;border:1px solid #354239;color:var(--text);border-bottom-left-radius:4px}.coach-user{align-self:flex-end;background:#c7f36b;color:#19210f;border-bottom-right-radius:4px}.coach-label{display:block;font-size:.66rem;font-weight:800;letter-spacing:.11em;color:#b3d77d;margin-bottom:4px}.coach-user .coach-label{color:#455629}.coach-form{margin-top:13px}.coach-safety{margin:13px 1px 0;font-size:.77rem}.coach-status{color:var(--accent2);font-size:.8rem;min-height:1.2em}
 input,select,button.primary{min-height:44px}.hero-orbit:after{animation:orbit 32s linear infinite}@keyframes orbit{to{transform:rotate(360deg)}}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c7f36b99;outline-offset:3px}::selection{background:#c7f36b55;color:var(--text)}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#7f2625;color:#fff;padding:11px 17px;border-radius:11px;display:none;max-width:90%;box-shadow:0 10px 35px #0007;z-index:10}.hide{display:none}
@@ -82,6 +83,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
       <button data-tab="water">Water</button>
       <button data-tab="progress">Progress</button>
       <button data-tab="plan">Plan</button>
+      <button data-tab="coach">Coach</button>
     </nav>
 
     <div id="t-workouts" class="tab">
@@ -173,6 +175,27 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
         </label>
         <button class="primary" id="find-alternative" type="button" style="margin-top:12px">Find alternatives</button>
         <div id="alternative-result" class="alternative-result" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div id="t-coach" class="tab hide">
+      <div class="card coach-card">
+        <h2>Fit Coach</h2>
+        <p id="coach-mode" class="muted">Ask about workouts, recovery, or staying consistent. AI mode uses your configured provider and may have charges; free built-in guidance works without a key. Chat clears when you refresh.</p>
+        <div class="coach-prompts" aria-label="Suggested questions">
+          <button type="button" class="prompt-chip" data-coach-question="What should I focus on for my goal?">My fitness goal</button>
+          <button type="button" class="prompt-chip" data-coach-question="How can I stay consistent with workouts?">Stay consistent</button>
+          <button type="button" class="prompt-chip" data-coach-question="I feel sore after a workout. What should I do?">Recovery advice</button>
+        </div>
+        <div id="coach-messages" class="coach-messages" aria-live="polite">
+          <div class="coach-message coach-assistant"><span class="coach-label">FIT COACH</span><div>Hi! I can help with general workout ideas, recovery habits, and motivation. What would you like help with?</div></div>
+        </div>
+        <p id="coach-status" class="coach-status" aria-live="polite"></p>
+        <form id="coach-form" class="coach-form">
+          <label class="full">Your question<input id="coach-input" name="message" maxlength="500" placeholder="Ask about your workout or fitness goal…" required></label>
+          <button class="primary full" id="coach-send">Ask coach</button>
+        </form>
+        <p class="muted coach-safety">General fitness guidance only—not medical advice. Stop if exercise causes pain, and consult a qualified professional about persistent or severe symptoms.</p>
       </div>
     </div>
   </section>
@@ -453,6 +476,39 @@ $('#find-alternative').onclick = () => {
   $('#alternative-result').innerHTML = `<span class="badge">${esc($('#plan-equipment').selectedOptions[0].textContent)} options</span>` +
     names.map((name, index) => `<div class="alternative-option"><span class="alternative-number">${index + 1}</span><b>${esc(name)}</b></div>`).join('') +
     '<p class="muted">Pick one that feels comfortable and use a manageable effort.</p>';
+};
+
+let coachHistory = [];
+function addCoachMessage(role, message, source) {
+  const bubble = document.createElement('div');
+  bubble.className = `coach-message ${role === 'user' ? 'coach-user' : 'coach-assistant'}`;
+  const label = document.createElement('span'); label.className = 'coach-label';
+  label.textContent = role === 'user' ? 'YOU' : source === 'ai' ? 'AI COACH' : 'QUICK COACH';
+  const content = document.createElement('div'); content.textContent = message;
+  bubble.append(label, content); $('#coach-messages').appendChild(bubble);
+  $('#coach-messages').scrollTop = $('#coach-messages').scrollHeight;
+}
+
+document.querySelectorAll('[data-coach-question]').forEach(button => {
+  button.onclick = () => { $('#coach-input').value = button.dataset.coachQuestion; $('#coach-form').requestSubmit(); };
+});
+
+$('#coach-form').onsubmit = async event => {
+  event.preventDefault();
+  const input = $('#coach-input'), button = $('#coach-send'), status = $('#coach-status');
+  const message = input.value.trim();
+  if (!message) return;
+  addCoachMessage('user', message);
+  button.disabled = true; button.textContent = 'Thinking…'; status.textContent = 'Coach is preparing a reply…';
+  try {
+    const result = await api(`/users/${user.id}/coach`, 'POST', {message, history: coachHistory.slice(-8)});
+    addCoachMessage('assistant', result.reply, result.source);
+    coachHistory.push({role: 'user', content: message}, {role: 'assistant', content: result.reply});
+    coachHistory = coachHistory.slice(-8);
+    input.value = ''; status.textContent = result.source === 'ai' ? 'AI-powered reply' : 'Free built-in guidance';
+  } catch (error) {
+    toast(error.message); status.textContent = 'Could not reach the coach. Check your connection and try again.';
+  } finally { button.disabled = false; button.textContent = 'Ask coach'; input.focus(); }
 };
 
 $('#gen').onclick = async () => {
