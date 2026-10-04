@@ -42,6 +42,7 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
 .day{border-color:#363850}.alternative-number{background:#30294a;color:#d6bdff}.alternative-option b{color:#f6f4ff}::selection{background:#a978ff77;color:#fff}
 .mascot-stage{width:min(100%,300px);height:208px;display:flex;align-items:end;justify-content:center;gap:7px;position:relative;filter:drop-shadow(0 15px 15px #07081255)}.mascot-stage:before{content:'';position:absolute;width:88%;height:22px;bottom:8px;border-radius:50%;background:#10142588;filter:blur(3px)}.tiny-doll{width:31%;height:184px;position:relative;z-index:1;overflow:visible;animation:doll-bob 3.2s ease-in-out infinite}.tiny-doll:nth-child(2){animation-delay:.45s;transform:scale(1.08)}.tiny-doll:nth-child(3){animation-delay:.9s}.tiny-doll .doll-shadow{fill:#10142566}.tiny-doll .skin{fill:#ffd0ad}.tiny-doll .hair{fill:#382749}.tiny-doll .face{fill:#24213a}.tiny-doll .shirt-a{fill:#b9ff66}.tiny-doll .shirt-b{fill:#ff8d79}.tiny-doll .shirt-c{fill:#65e7dc}.tiny-doll .shorts{fill:#b49aff}.tiny-doll .shoe{fill:#fff2bc}.mascot-sparkle{position:absolute;color:#d8ff9b;font-size:20px;font-weight:900;animation:sparkle 2s ease-in-out infinite}.mascot-sparkle.one{top:15px;left:13%}.mascot-sparkle.two{right:11%;top:47px;color:#ffb69c;animation-delay:.7s}@keyframes doll-bob{0%,100%{translate:0 0}50%{translate:0 -7px}}@keyframes sparkle{0%,100%{opacity:.45;scale:.8}50%{opacity:1;scale:1.2}}
 @media(max-width:680px){.hero-art{display:grid!important;min-height:195px}.mascot-stage{height:190px}.tiny-doll{height:164px}}
+.daily-motivation{display:flex;align-items:center;gap:13px;margin:0 0 17px;padding:13px 17px;border:1px solid #675394;border-radius:15px;background:linear-gradient(105deg,#30234c,#203345 68%,#203b38);box-shadow:0 10px 25px #08081244}.motivation-icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#c2ff6c,#63e5d0);color:#202038;font-size:21px}.motivation-copy{min-width:0}.motivation-label{color:#d5bcff;font-size:.68rem;font-weight:850;letter-spacing:.13em}.daily-motivation p{margin:2px 0 0;color:#fff;font-size:.98rem;font-weight:650}.motivation-spark{margin-left:auto;color:#ffbd92;font-size:22px}
 </style>
 </head>
 <body>
@@ -105,6 +106,7 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
         <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><circle class="skin" cx="51" cy="36" r="20"/><path class="hair" d="M31 37 Q28 11 51 13 Q75 14 71 42 Q64 30 54 28 Q42 38 31 37Z"/><circle class="face" cx="45" cy="37" r="1.8"/><circle class="face" cx="58" cy="37" r="1.8"/><path d="M47 45 Q52 49 57 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path class="shirt-c" d="M38 56 Q50 48 63 56 L70 100 L31 100Z"/><path d="M36 65 L20 82 L30 94 M64 65 L80 82 L72 93" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path class="shorts" d="M32 98 L69 98 L64 120 L53 120 L50 110 L46 120 L35 120Z"/><path d="M42 117 L38 158 M60 117 L65 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M61 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
       </div><div class="hero-note">BUILT AROUND YOU<b>One step at a time</b></div></div>
     </div>
+    <aside class="daily-motivation" aria-live="polite"><span class="motivation-icon">✦</span><div class="motivation-copy"><span id="motivation-label" class="motivation-label">TODAY'S MOTIVATION</span><p id="daily-quote">Small steps today build a stronger you.</p></div><span class="motivation-spark" aria-hidden="true">✧</span></aside>
     <nav class="tabs" id="tabs">
       <button data-tab="workouts" class="on">Workouts</button>
       <button data-tab="meals">Meals</button>
@@ -425,9 +427,37 @@ function setLanguage(language) {
   localStorage.setItem('fittrack_language', appLanguage);
   document.documentElement.lang = appLanguage;
   document.title = appLanguage === 'ta' ? 'AI FitTrack — உடற்தகுதி வழிகாட்டி' : 'AI FitTrack — Your fitness, in rhythm';
+  updateDailyMotivation();
   translateSubtree(document.body);
   $('#language-toggle').textContent = appLanguage === 'ta' ? 'English' : 'தமிழ்';
   $('#language-toggle').setAttribute('aria-label', appLanguage === 'ta' ? 'Switch to English' : 'தமிழுக்கு மாற்று');
+}
+const dailyMotivations = {
+  en: [
+    'Small steps today build a stronger you.',
+    'Show up for yourself—one workout at a time.',
+    'Progress beats perfection. Keep moving.',
+    'Your pace is perfect. Just keep going.',
+    'Consistency is your superpower.',
+    'Rest, reset, and come back stronger.',
+    'You’re doing better than you think.'
+  ],
+  ta: [
+    'இன்றைய சிறிய முயற்சி, நாளைய வலிமையான உங்களை உருவாக்கும்.',
+    'ஒவ்வொரு பயிற்சியிலும் உங்களுக்காக நேரம் ஒதுக்குங்கள்.',
+    'முழுமையை விட முன்னேற்றமே முக்கியம். தொடர்ந்து நகருங்கள்.',
+    'உங்கள் வேகம் சரியானது. தொடர்ந்து செல்லுங்கள்.',
+    'தொடர்ச்சியாக முயற்சி செய்வதே உங்கள் பலம்.',
+    'ஓய்வெடுத்து, புத்துணர்ச்சியுடன் மீண்டும் தொடங்குங்கள்.',
+    'நீங்கள் நினைப்பதைவிட நன்றாக முன்னேறுகிறீர்கள்.'
+  ]
+};
+function updateDailyMotivation() {
+  const quote = $('#daily-quote'), label = $('#motivation-label');
+  if (!quote || !label) return;
+  const day = new Date().getDay();
+  quote.textContent = dailyMotivations[appLanguage][day];
+  label.textContent = appLanguage === 'ta' ? 'இன்றைய ஊக்கம்' : "TODAY'S MOTIVATION";
 }
 $('#language-toggle').onclick = () => setLanguage(appLanguage === 'ta' ? 'en' : 'ta');
 setLanguage(appLanguage);
