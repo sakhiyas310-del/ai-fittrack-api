@@ -43,6 +43,8 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
 .mascot-stage{width:min(100%,300px);height:208px;display:flex;align-items:end;justify-content:center;gap:7px;position:relative;filter:drop-shadow(0 15px 15px #07081255)}.mascot-stage:before{content:'';position:absolute;width:88%;height:22px;bottom:8px;border-radius:50%;background:#10142588;filter:blur(3px)}.tiny-doll{width:31%;height:184px;position:relative;z-index:1;overflow:visible;animation:doll-bob 3.2s ease-in-out infinite}.tiny-doll:nth-child(2){animation-delay:.45s;transform:scale(1.08)}.tiny-doll:nth-child(3){animation-delay:.9s}.tiny-doll .doll-shadow{fill:#10142566}.tiny-doll .skin{fill:#ffd0ad}.tiny-doll .hair{fill:#382749}.tiny-doll .face{fill:#24213a}.tiny-doll .shirt-a{fill:#b9ff66}.tiny-doll .shirt-b{fill:#ff8d79}.tiny-doll .shirt-c{fill:#65e7dc}.tiny-doll .shorts{fill:#b49aff}.tiny-doll .shoe{fill:#fff2bc}.mascot-sparkle{position:absolute;color:#d8ff9b;font-size:20px;font-weight:900;animation:sparkle 2s ease-in-out infinite}.mascot-sparkle.one{top:15px;left:13%}.mascot-sparkle.two{right:11%;top:47px;color:#ffb69c;animation-delay:.7s}@keyframes doll-bob{0%,100%{translate:0 0}50%{translate:0 -7px}}@keyframes sparkle{0%,100%{opacity:.45;scale:.8}50%{opacity:1;scale:1.2}}
 @media(max-width:680px){.hero-art{display:grid!important;min-height:195px}.mascot-stage{height:190px}.tiny-doll{height:164px}}
 .daily-motivation{display:flex;align-items:center;gap:13px;margin:0 0 17px;padding:13px 17px;border:1px solid #675394;border-radius:15px;background:linear-gradient(105deg,#30234c,#203345 68%,#203b38);box-shadow:0 10px 25px #08081244}.motivation-icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#c2ff6c,#63e5d0);color:#202038;font-size:21px}.motivation-copy{min-width:0}.motivation-label{color:#d5bcff;font-size:.68rem;font-weight:850;letter-spacing:.13em}.daily-motivation p{margin:2px 0 0;color:#fff;font-size:.98rem;font-weight:650}.motivation-spark{margin-left:auto;color:#ffbd92;font-size:22px}
+.streak-calendar{margin:17px 0 10px;padding:15px;border:1px solid #414361;border-radius:15px;background:linear-gradient(145deg,#191a2b,#1d2033)}.calendar-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.calendar-top strong{font-size:.95rem}.calendar-legend{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.74rem}.calendar-legend-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#b9ff66,#56e3c5);box-shadow:0 0 10px #8bff9b66}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}.calendar-weekday{padding:3px 0;color:#aaaed0;font-size:.72rem;font-weight:750}.calendar-day{display:grid;place-items:center;aspect-ratio:1;max-width:40px;width:100%;margin:auto;border:1px solid transparent;border-radius:11px;color:#d1d3e3;font-size:.8rem}.calendar-day.active{background:linear-gradient(145deg,#334b37,#214846);border-color:#70dba0;color:#e1ffd8;font-weight:800;box-shadow:inset 0 0 13px #73ffae18}.calendar-day.today{outline:2px solid #b58aff;outline-offset:1px}.calendar-day.empty{visibility:hidden}
+@media(max-width:520px){.streak-calendar{padding:11px}.calendar-grid{gap:4px}.calendar-day{border-radius:9px;font-size:.75rem}}
 </style>
 </head>
 <body>
@@ -254,7 +256,8 @@ const tamilText = {
   'Beginner':'தொடக்கநிலை','Intermediate':'இடைநிலை','Advanced':'மேம்பட்ட நிலை','Create profile':'கணக்கை உருவாக்கு',
   'Workouts':'உடற்பயிற்சி','Meals':'உணவு','Water':'தண்ணீர்','Progress':'முன்னேற்றம்','Plan':'திட்டம்','Coach':'வழிகாட்டி',
   'Weekly consistency & badges':'வாராந்திர தொடர்ச்சி & பதக்கங்கள்','This week':'இந்த வாரம்',
-  'Completed weeks in a row':'தொடர்ச்சியான வாரங்கள்','Active days total':'மொத்த பயிற்சி நாட்கள்',
+  'Completed weeks in a row':'தொடர்ச்சியான வாரங்கள்','Active days total':'மொத்த பயிற்சி நாட்கள்','Current day streak':'தொடர்ச்சியான பயிற்சி நாட்கள்',
+  'Workout calendar':'உடற்பயிற்சி நாட்காட்டி','Workout day':'பயிற்சி செய்த நாள்',
   'First workout':'முதல் பயிற்சி','5 active days':'5 பயிற்சி நாட்கள்','10 active days':'10 பயிற்சி நாட்கள்',
   '25 active days':'25 பயிற்சி நாட்கள்','Weekly goal reached':'வார இலக்கு நிறைவு',
   'Counts workout days against your weekly goal. Rest days are expected.':'வார இலக்குடன் உங்கள் பயிற்சி நாட்களை ஒப்பிடுகிறது. ஓய்வு நாட்களும் முக்கியம்.',
@@ -459,14 +462,17 @@ function updateDailyMotivation() {
   quote.textContent = dailyMotivations[appLanguage][day];
   label.textContent = appLanguage === 'ta' ? 'இன்றைய ஊக்கம்' : "TODAY'S MOTIVATION";
 }
-$('#language-toggle').onclick = () => setLanguage(appLanguage === 'ta' ? 'en' : 'ta');
+$('#language-toggle').onclick = () => {
+  setLanguage(appLanguage === 'ta' ? 'en' : 'ta');
+  if (user) renderConsistency(latestWorkoutEntries);
+};
 setLanguage(appLanguage);
 new MutationObserver(records => records.forEach(record => {
   if (record.type === 'characterData') translateSubtree(record.target);
   if (record.type === 'childList') record.addedNodes.forEach(node => translateSubtree(node));
   if (record.type === 'attributes') translateSubtree(record.target);
 })).observe(document.body, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'aria-label', 'title', 'data-coach-question', 'label']});
-let user = null, token = localStorage.getItem('fittrack_token');
+let user = null, token = localStorage.getItem('fittrack_token'), latestWorkoutEntries = [];
 
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.style.display = 'block';
@@ -548,6 +554,7 @@ async function refresh() {
     api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`), api(`/users/${id}/water`)
   ]);
 
+  latestWorkoutEntries = w;
   $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min' + (x.reps ? ' · ' + x.reps + ' reps' : ''), x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
   renderConsistency(w);
   $('#l-meals').innerHTML = m.map(x => row(x.food_name, x.calories + ' kcal', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('meals', x.id))).join('') || '<p class="muted">No meals yet.</p>';
@@ -584,8 +591,10 @@ function shiftWeek(week, amount) {
 
 function renderConsistency(workouts) {
   const activeDates = [...new Set(workouts.map(x => x.date))];
+  const activeSet = new Set(activeDates);
   const target = Math.max(1, Number(user.workout_days_per_week) || 3);
-  const thisWeek = weekKey(today());
+  const todayText = today(), currentDate = new Date(`${todayText}T00:00:00`);
+  const thisWeek = weekKey(todayText);
   const byWeek = {};
   activeDates.forEach(date => { const key = weekKey(date); byWeek[key] = (byWeek[key] || 0) + 1; });
   const thisWeekCount = byWeek[thisWeek] || 0;
@@ -597,6 +606,31 @@ function renderConsistency(workouts) {
     streak += 1;
     week = shiftWeek(week, -1);
   }
+
+  const dateKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  let streakDate = new Date(currentDate), dayStreak = 0;
+  if (!activeSet.has(todayText)) streakDate.setDate(streakDate.getDate() - 1);
+  while (activeSet.has(dateKey(streakDate)) && dayStreak < activeDates.length) {
+    dayStreak += 1;
+    streakDate.setDate(streakDate.getDate() - 1);
+  }
+
+  const locale = appLanguage === 'ta' ? 'ta-IN' : 'en-IN';
+  const monthTitle = new Intl.DateTimeFormat(locale, {month: 'long', year: 'numeric'}).format(currentDate);
+  const weekdays = Array.from({length: 7}, (_, i) => new Intl.DateTimeFormat(locale, {weekday: 'short'}).format(new Date(Date.UTC(2024, 0, i + 1))));
+  const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  const offset = (monthStart.getDay() + 6) % 7;
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  const calendarSlots = Math.ceil((offset + daysInMonth) / 7) * 7;
+  const calendarCells = Array.from({length: calendarSlots}, (_, index) => {
+    const day = index - offset + 1;
+    if (day < 1 || day > daysInMonth) return '<span class="calendar-day empty" aria-hidden="true"></span>';
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const key = dateKey(date), active = activeSet.has(key), isToday = key === todayText;
+    const label = new Intl.DateTimeFormat(locale, {dateStyle: 'full'}).format(date);
+    const workoutLabel = appLanguage === 'ta' ? ' · பயிற்சி நாள்' : ' · Workout day';
+    return `<span class="calendar-day${active ? ' active' : ''}${isToday ? ' today' : ''}"${isToday ? ' aria-current="date"' : ''} title="${esc(label)}" aria-label="${esc(label)}${active ? workoutLabel : ''}">${new Intl.NumberFormat(locale, {useGrouping: false}).format(day)}</span>`;
+  }).join('');
 
   const badges = [
     {label: 'First workout', earned: activeDates.length >= 1},
@@ -611,9 +645,14 @@ function renderConsistency(workouts) {
       <div class="stat"><b>${thisWeekCount}/${target}</b>This week</div>
       <div class="stat"><b>${streak}</b>Completed weeks in a row</div>
       <div class="stat"><b>${activeDates.length}</b>Active days total</div>
+      <div class="stat"><b>${dayStreak}</b>Current day streak</div>
     </div>
     <div class="progress-track" aria-label="Weekly goal progress"><div class="progress-fill" style="width:${percent}%"></div></div>
     <div class="badge-list">${badges.map(b => `<span class="achievement ${b.earned ? 'unlocked' : 'locked'}">${b.earned ? '🏅' : '🔒'} ${b.label}</span>`).join('')}</div>
+    <section class="streak-calendar" aria-label="Workout calendar">
+      <div class="calendar-top"><strong>${esc(monthTitle)}</strong><span class="calendar-legend"><i class="calendar-legend-dot"></i>Workout day</span></div>
+      <div class="calendar-grid">${weekdays.map(name => `<span class="calendar-weekday">${esc(name)}</span>`).join('')}${calendarCells}</div>
+    </section>
     <p class="muted">Counts workout days against your weekly goal. Rest days are expected.</p>`;
 }
 
