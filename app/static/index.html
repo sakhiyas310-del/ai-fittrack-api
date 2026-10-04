@@ -15,6 +15,7 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{display:flex;flex
 #app>.app-hero,.welcome-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;min-height:255px;padding:30px 36px;border-radius:23px;background:linear-gradient(112deg,#27351e 0%,#1c261c 48%,#18201d 100%);border:1px solid #3b4c31;box-shadow:0 20px 55px #0003}.eyebrow{display:inline-block;color:var(--accent);font-size:.73rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero-copy h2{font-size:clamp(2rem,5vw,3.5rem);line-height:1.04;max-width:560px;margin:12px 0}.hero-copy p{max-width:500px;color:#c1cbbf;margin:0 0 17px}.hero-pills{display:flex;flex-wrap:wrap;gap:8px}.hero-pills span{font-size:.77rem;color:#dce7d5;border:1px solid #53634b;background:#1b251b;border-radius:99px;padding:5px 10px}.hero-art{position:relative;min-height:190px;display:grid;place-items:center}.hero-orbit{width:176px;height:176px;border:1px solid #718b50;border-radius:50%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 40px #c7f36b12,0 0 50px #c7f36b10}.hero-orbit:before,.hero-orbit:after{content:'';position:absolute;border:1px solid #91a86b66;border-radius:50%;inset:17px}.hero-orbit:after{inset:35px;border-style:dashed}.hero-orbit b{font-size:2rem;color:var(--accent);letter-spacing:.12em}.hero-orbit i{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent);top:24px;right:25px}.hero-note{position:absolute;bottom:0;right:0;background:#111712dd;border:1px solid #53634b;border-radius:12px;padding:9px 13px;color:#b8c5b4;font-size:.68rem;letter-spacing:.1em}.hero-note b{display:block;color:var(--accent);font-size:.86rem;letter-spacing:0;margin-top:1px}
 #who{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#171d19;color:#dce5dc;font-size:.82rem}#who .link{border-left:1px solid var(--line);padding-left:9px;color:var(--accent);font-weight:700}
 .card h2{display:flex;align-items:center;gap:10px}.card h2:before{content:'';width:4px;height:20px;border-radius:4px;background:var(--accent);flex:0 0 4px}
+.header-actions{display:flex;align-items:center;gap:10px}.language-toggle{border:1px solid #526044;border-radius:999px;background:#20291d;color:var(--accent2);padding:8px 12px;font:inherit;font-size:.82rem;font-weight:750;cursor:pointer}.language-toggle:hover{border-color:var(--accent);background:#29351e}
 input,select,button.primary,.voice-button{min-height:44px}.voice-tools{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:2px}.voice-button{border:1px solid #526044;border-radius:10px;background:#20291d;color:var(--accent2);padding:8px 12px;font:inherit;font-size:.84rem;font-weight:700;cursor:pointer}.voice-button:hover{border-color:var(--accent);background:#29351e}.voice-button:disabled{opacity:.6;cursor:wait}
 .alternative-result{margin-top:16px}.alternative-option{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.alternative-option:first-child{border-top:0}.alternative-number{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:800}.alternative-option b{display:block;color:var(--text)}
 .coach-card{max-width:850px;margin-inline:auto}.coach-prompts{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.prompt-chip{border:1px solid var(--line);border-radius:999px;background:#202824;color:#dce5dc;padding:8px 12px;font:inherit;font-size:.8rem;cursor:pointer}.prompt-chip:hover{border-color:var(--accent);color:var(--accent2)}.coach-messages{display:flex;flex-direction:column;gap:10px;max-height:390px;overflow-y:auto;padding:15px;background:#111713;border:1px solid var(--line);border-radius:15px;scroll-behavior:smooth}.coach-message{max-width:88%;padding:12px 14px;border-radius:14px;line-height:1.55;overflow-wrap:anywhere}.coach-assistant{align-self:flex-start;background:#222a24;border:1px solid #354239;color:var(--text);border-bottom-left-radius:4px}.coach-user{align-self:flex-end;background:#c7f36b;color:#19210f;border-bottom-right-radius:4px}.coach-label{display:block;font-size:.66rem;font-weight:800;letter-spacing:.11em;color:#b3d77d;margin-bottom:4px}.coach-user .coach-label{color:#455629}.coach-form{margin-top:13px}.coach-safety{margin:13px 1px 0;font-size:.77rem}.coach-status{color:var(--accent2);font-size:.8rem;min-height:1.2em}
@@ -28,7 +29,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="wrap">
   <header>
     <h1>AI FitTrack</h1>
-    <div id="who" class="muted"></div>
+    <div class="header-actions"><button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language">தமிழ்</button><div id="who" class="muted"></div></div>
   </header>
 
   <!-- Step 1: create or load a profile -->
@@ -207,6 +208,207 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 const $ = s => document.querySelector(s);
 const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tamilText = {
+  'Your fitness, in rhythm':'உங்கள் உடற்தகுதி, உங்கள் தாளத்தில்','Your daily reset':'உங்கள் தினசரி தொடக்கம்',
+  'Your best days':'உங்கள் சிறந்த நாட்கள்','start with a plan.':'ஒரு திட்டத்துடன் தொடங்கட்டும்.',
+  'Make room for movement, meals that suit you, and progress you can actually see.':'உடற்பயிற்சி, உங்களுக்கு ஏற்ற உணவு, உங்கள் முன்னேற்றம்—எல்லாவற்றையும் ஒரே இடத்தில் பாருங்கள்.',
+  'YOUR ROUTINE':'உங்கள் வழக்கம்','YOUR PACE':'உங்கள் வேகம்','YOUR PROGRESS':'உங்கள் முன்னேற்றம்',
+  'A FRESH START':'புதிய தொடக்கம்','Starts right here':'இங்கே தொடங்குங்கள்',
+  'Move with purpose.':'குறிக்கோளுடன் நகருங்கள்.','Feel the progress.':'முன்னேற்றத்தை உணருங்கள்.',
+  'A little consistency goes a long way. Track your training, find meals that fit, and keep building a stronger you.':'தொடர்ச்சியான சிறிய முயற்சிகள் பெரிய மாற்றத்தைத் தரும். உடற்பயிற்சி, உணவு, முன்னேற்றம் ஆகியவற்றை ஒரே இடத்தில் பதிவு செய்யுங்கள்.',
+  'TRAIN':'பயிற்சி','EAT WELL':'நல்ல உணவு','KEEP GOING':'தொடருங்கள்','BUILT AROUND YOU':'உங்களுக்காக உருவாக்கப்பட்டது','One step at a time':'ஒவ்வொரு படியாக',
+  'Log in':'உள்நுழைக','New here? Create your account':'புதியவரா? கணக்கை உருவாக்குங்கள்',
+  'Email':'மின்னஞ்சல்','Password':'கடவுச்சொல்','Password (6+ characters)':'கடவுச்சொல் (குறைந்தது 6 எழுத்துகள்)',
+  'Name':'பெயர்','Age':'வயது','Workout days / week':'வாரத்திற்கான உடற்பயிற்சி நாட்கள்',
+  'Height (cm)':'உயரம் (செ.மீ.)','Weight (kg)':'எடை (கி.கி.)','Goal':'குறிக்கோள்','Experience':'அனுபவம்',
+  'Build muscle':'தசை வளர்ப்பு','Lose weight':'எடை குறைப்பு','Endurance':'தாங்கும் திறன்','General fitness':'பொது உடற்தகுதி',
+  'Beginner':'தொடக்கநிலை','Intermediate':'இடைநிலை','Advanced':'மேம்பட்ட நிலை','Create profile':'கணக்கை உருவாக்கு',
+  'Workouts':'உடற்பயிற்சி','Meals':'உணவு','Water':'தண்ணீர்','Progress':'முன்னேற்றம்','Plan':'திட்டம்','Coach':'வழிகாட்டி',
+  'Weekly consistency & badges':'வாராந்திர தொடர்ச்சி & பதக்கங்கள்','This week':'இந்த வாரம்',
+  'Completed weeks in a row':'தொடர்ச்சியான வாரங்கள்','Active days total':'மொத்த பயிற்சி நாட்கள்',
+  'First workout':'முதல் பயிற்சி','5 active days':'5 பயிற்சி நாட்கள்','10 active days':'10 பயிற்சி நாட்கள்',
+  '25 active days':'25 பயிற்சி நாட்கள்','Weekly goal reached':'வார இலக்கு நிறைவு',
+  'Counts workout days against your weekly goal. Rest days are expected.':'வார இலக்குடன் உங்கள் பயிற்சி நாட்களை ஒப்பிடுகிறது. ஓய்வு நாட்களும் முக்கியம்.',
+  'Log a workout':'பயிற்சியைப் பதிவு செய்','Exercise':'பயிற்சி','Reps (optional)':'முறை எண்ணிக்கை (விருப்பம்)',
+  'Minutes':'நிமிடங்கள்','Date':'தேதி','Notes (optional)':'குறிப்புகள் (விருப்பம்)','Add workout':'பயிற்சியைச் சேர்',
+  'History':'வரலாறு','No workouts yet.':'இன்னும் பயிற்சிகள் பதிவாகவில்லை.','Delete':'நீக்கு',
+  'Speak workout':'குரலில் பதிவு செய்','Try: “I did 10 pushups in 5 minutes”':'சொல்லிப் பாருங்கள்: “10 புஷ்-அப் 5 நிமிடம் செய்தேன்”',
+  'e.g. Push-ups':'உதா: புஷ்-அப்','e.g. 10':'உதா: 10',
+  'Food (pick from list or type)':'உணவு (பட்டியலில் தேர்வு செய்யவும் அல்லது எழுதவும்)',
+  'Calories (approx.)':'கலோரி (தோராயம்)','Add meal':'உணவைச் சேர்','Log a meal':'உணவைப் பதிவு செய்',
+  'Generate a full-day food plan':'ஒரு நாள் முழு உணவுத் திட்டம்','Choose your food type and cuisine. Select any ingredients you want to avoid.':'உணவு வகை மற்றும் சமையல் முறையைத் தேர்ந்தெடுக்கவும். தவிர்க்க வேண்டியவற்றையும் குறிக்கவும்.',
+  'Food type':'உணவு வகை','Vegetarian':'சைவம்','Non-vegetarian':'அசைவம்','Vegan':'முழு தாவர உணவு',
+  'Cuisine':'சமையல் முறை','South Indian':'தென்னிந்திய','North Indian':'வடஇந்திய','Any cuisine':'எதுவானாலும்',
+  'Avoid:':'தவிர்க்கவும்:','Eggs':'முட்டை','Dairy':'பால் உணவுகள்','Peanuts':'நிலக்கடலை','Generate day plan':'ஒரு நாள் திட்டம் உருவாக்கு',
+  'General meal ideas only. Check ingredients carefully for allergies or health needs.':'இவை பொதுவான உணவு யோசனைகள். ஒவ்வாமை அல்லது உடல்நலத் தேவைகளுக்கு பொருட்களைச் சரிபார்க்கவும்.',
+  'No meals yet.':'இன்னும் உணவுகள் பதிவாகவில்லை.','Generate plan':'திட்டத்தை உருவாக்கு',
+  'Sample plan (AI provider not configured)':'மாதிரி திட்டம் (AI இணைக்கப்படவில்லை)','AI plan from your instructions':'உங்கள் வழிமுறைக்கான AI திட்டம்',
+  'Log water':'தண்ணீரைப் பதிவு செய்','Amount (ml)':'அளவு (மி.லி.)','Add water':'தண்ணீரைச் சேர்',
+  'Water history':'தண்ணீர் வரலாறு','No water entries yet.':'இன்னும் தண்ணீர் பதிவுகள் இல்லை.',
+  'Record your weight':'எடையைப் பதிவு செய்','Save weight':'எடையைச் சேமி',
+  'Weekly workout plan':'வாராந்திர உடற்பயிற்சி திட்டம்',
+  'Your profile and goal are used automatically. Choose your workout time and equipment.':'உங்கள் சுயவிவரம் மற்றும் குறிக்கோளை வைத்து திட்டம் உருவாகும். பயிற்சி நேரம், உபகரணத்தைத் தேர்ந்தெடுக்கவும்.',
+  'Time per workout':'ஒவ்வொரு பயிற்சிக்கான நேரம்','20 minutes':'20 நிமிடங்கள்','30 minutes':'30 நிமிடங்கள்','45 minutes':'45 நிமிடங்கள்',
+  'Equipment':'உபகரணம்','No equipment':'உபகரணம் இல்லை','Dumbbells or resistance band':'டம்ப்பெல் அல்லது resistance band','Gym equipment':'ஜிம் உபகரணம்',
+  'Need an exercise swap?':'மாற்றுப் பயிற்சி வேண்டுமா?','Choose a busy machine. Suggestions will match the equipment option above.':'பயன்பாட்டில் இருக்கும் இயந்திரத்தைத் தேர்ந்தெடுக்கவும். மேலே தேர்ந்தெடுத்த உபகரணத்திற்கு ஏற்ற பயிற்சிகள் வரும்.',
+  'Busy exercise or machine':'பயன்பாட்டில் இருக்கும் பயிற்சி / இயந்திரம்','Leg press':'Leg press','Chest press / bench press':'Chest press / bench press',
+  'Lat pulldown':'Lat pulldown','Leg curl':'Leg curl','Shoulder press':'Shoulder press','Treadmill':'Treadmill',
+  'Find alternatives':'மாற்றுப் பயிற்சிகளைக் காட்டு','Pick one that feels comfortable and use a manageable effort.':'உங்களுக்கு வசதியான ஒன்றைத் தேர்ந்தெடுத்து மெதுவாகத் தொடங்குங்கள்.',
+  'Fit Coach':'உடற்பயிற்சி வழிகாட்டி','My fitness goal':'என் குறிக்கோள்','Stay consistent':'தொடர்ச்சியாகச் செய்வது','Recovery advice':'ஓய்வு ஆலோசனை',
+  'Your question':'உங்கள் கேள்வி','Ask coach':'வழிகாட்டியிடம் கேளுங்கள்','Thinking…':'யோசிக்கிறது…',
+  'General fitness guidance only—not medical advice. Stop if exercise causes pain, and consult a qualified professional about persistent or severe symptoms.':'இது பொதுவான உடற்பயிற்சி வழிகாட்டுதல்; மருத்துவ ஆலோசனை அல்ல. வலி ஏற்பட்டால் நிறுத்தி, கடுமையான அல்லது நீடிக்கும் அறிகுறிகளுக்கு நிபுணரை அணுகவும்.',
+  'Idli (2 pieces)':'இட்லி (2)','Dosa (1 plain)':'தோசை (1)','Vada (1)':'வடை (1)','Pongal (1 bowl)':'பொங்கல் (1 கிண்ணம்)',
+  'Upma (1 bowl)':'உப்புமா (1 கிண்ணம்)','Poori (2)':'பூரி (2)','Chapati (1)':'சப்பாத்தி (1)','Parotta (1)':'பரோட்டா (1)',
+  'Plain rice (1 cup)':'சாதம் (1 கப்)','Curd rice (1 cup)':'தயிர் சாதம் (1 கப்)','Sambar (1 bowl)':'சாம்பார் (1 கிண்ணம்)',
+  'Half veg meal':'அரை சைவ சாப்பாடு','Full veg meal':'முழு சைவ சாப்பாடு','Chicken curry (1 bowl)':'கோழிக் குழம்பு (1 கிண்ணம்)',
+  'Chicken biryani (1 plate)':'கோழி பிரியாணி (1 தட்டு)','Sundal (1 bowl)':'சுண்டல் (1 கிண்ணம்)',
+  'Egg (boiled, 1)':'வேகவைத்த முட்டை (1)','Banana (1)':'வாழைப்பழம் (1)','Filter coffee':'ஃபில்டர் காபி',
+  'Tea with milk and sugar':'பால் சர்க்கரை தேநீர்','Bodyweight Squats':'உடல் எடையுடன் உட்கார்ந்து எழுதல்',
+  'Push-ups':'புஷ்-அப்','Brisk Walk or Jog':'வேக நடை அல்லது மெதுவோட்டம்','Plank':'பிளாங்க்',
+  'Jumping Jacks':'ஜம்பிங் ஜாக்ஸ்','Bicycle Crunches':'பைசிக்கிள் கிரஞ்சஸ்','Superman Holds':'சூப்பர்மேன் ஹோல்ட்ஸ்',
+  'Pike Push-ups':'பைக் புஷ்-அப்','Bicep Curls':'பைசெப் கர்ல்ஸ்','Shoulder Press':'ஷோல்டர் பிரஸ்',
+  'Tricep Dips':'டிரைசெப் டிப்ஸ்','Lunges':'லஞ்சஸ்','Calf Raises':'குதிகால் உயர்த்துதல்',
+  'Monday':'திங்கள்','Tuesday':'செவ்வாய்','Wednesday':'புதன்','Thursday':'வியாழன்','Friday':'வெள்ளி','Saturday':'சனி','Sunday':'ஞாயிறு','Rest':'ஓய்வு',
+  'No water entries yet.':'இன்னும் தண்ணீர் பதிவுகள் இல்லை.','Add at least two weight entries to see a chart.':'வரைபடத்தைப் பார்க்க குறைந்தது இரண்டு எடைப் பதிவுகள் தேவை.',
+  'Underweight':'குறைந்த எடை','Normal':'சாதாரணம்','Overweight':'அதிக எடை','Obese':'உடல் பருமன்',
+  'Start (kg)':'தொடக்கம் (கி.கி.)','Now (kg)':'இப்போது (கி.கி.)','Change (kg)':'மாற்றம் (கி.கி.)',
+  'Free built-in guidance':'இலவச அடிப்படை வழிகாட்டுதல்','AI-powered reply':'AI பதில்',
+  'Coach is preparing a reply…':'வழிகாட்டி பதில் தயாரிக்கிறார்…','YOU':'நீங்கள்','AI COACH':'AI வழிகாட்டி',
+  'Quick Coach':'வழிகாட்டி','BMI':'உடல் நிறை குறியீடு',
+  'Ask about workouts, recovery, or staying consistent. AI mode uses your configured provider and may have charges; free built-in guidance works without a key. Chat clears when you refresh.':'உடற்பயிற்சி, ஓய்வு, தொடர்ச்சி பற்றி கேளுங்கள். AI சேவைக்கு கட்டணம் இருக்கலாம்; key இல்லாமலும் இலவச வழிகாட்டுதல் கிடைக்கும். Refresh செய்தால் உரையாடல் அழியும்.',
+  'QUICK COACH':'வழிகாட்டி','FIT COACH':'பயிற்சி வழிகாட்டி','No workout plan yet.':'உடற்பயிற்சி திட்டம் இன்னும் உருவாக்கப்படவில்லை.',
+  'Could not reach the coach. Check your connection and try again.':'Coach-ஐ அணுக முடியவில்லை. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
+  'Exercise name wasn’t clear. Try saying “I did 10 pushups in 5 minutes”.':'பயிற்சியின் பெயர் தெளிவாகக் கேட்கவில்லை. மீண்டும் சொல்லிப் பாருங்கள்.',
+  'What should I focus on for my goal?':'என் குறிக்கோளுக்காக எதில் கவனம் செலுத்தலாம்?',
+  'How can I stay consistent with workouts?':'உடற்பயிற்சியைத் தொடர்ச்சியாகச் செய்வது எப்படி?',
+  'I feel sore after a workout. What should I do?':'பயிற்சிக்குப் பிறகு தசை வலிக்கிறது. என்ன செய்யலாம்?',
+  'Ask about your workout or fitness goal…':'உடற்பயிற்சி அல்லது குறிக்கோள் பற்றி கேளுங்கள்…',
+  'No workout plan yet.':'உடற்பயிற்சி திட்டம் இன்னும் உருவாக்கப்படவில்லை.','Log out':'வெளியேறு',
+  'What should I focus on for my goal?':'என் குறிக்கோளுக்காக எதில் கவனம் செலுத்தலாம்?',
+  'How can I stay consistent with workouts?':'உடற்பயிற்சியைத் தொடர்ச்சியாகச் செய்வது எப்படி?',
+  'I feel sore after a workout. What should I do?':'பயிற்சிக்குப் பிறகு தசை வலிக்கிறது. என்ன செய்யலாம்?',
+  'Ask about your workout or fitness goal…':'உடற்பயிற்சி அல்லது குறிக்கோள் பற்றி கேளுங்கள்…',
+  'AI mode uses your configured provider and may have charges; free built-in guidance works without a key. Chat clears when you refresh.':'AI பதில்களுக்கு கட்டணம் இருக்கலாம்; key இல்லாமலும் இலவச அடிப்படை வழிகாட்டுதல் கிடைக்கும். Refresh செய்தால் உரையாடல் அழியும்.',
+  'Hi! I can help with general workout ideas, recovery habits, and motivation. What would you like help with?':'வணக்கம்! உடற்பயிற்சி யோசனைகள், ஓய்வு, ஊக்கம் பற்றி பொதுவான உதவி தருகிறேன். உங்களுக்கு என்ன உதவி வேண்டும்?',
+  'Full Body + Cardio':'முழு உடல் + கார்டியோ','Cardio + Core':'கார்டியோ + வயிற்றுப் பகுதி','Full Body Strength':'முழு உடல் வலிமை',
+  'Push (Chest/Shoulders/Triceps)':'புஷ் (மார்பு/தோள்/டிரைசெப்ஸ்)','Pull (Back/Biceps)':'புல் (முதுகு/பைசெப்ஸ்)','Legs':'கால்கள்',
+  'Cardio Intervals':'இடைவேளை கார்டியோ','Steady-State Cardio':'சீரான கார்டியோ','Cardio + Mobility':'கார்டியோ + உடல் நெகிழ்வு',
+  'Jog, Cycle, or Swim':'மெதுவோட்டம், சைக்கிள் அல்லது நீச்சல்','Dynamic Stretching':'இயக்க நீட்டிப்புகள்',
+  'Bent-over Rows':'முன்வளைந்து ரோஸ்','Bent-over Rows (light weight/band)':'முன்வளைந்து ரோஸ் (குறைந்த எடை/band)',
+  'Dumbbell or Band Rows':'டம்ப்பெல் அல்லது band ரோஸ்','Cable or Machine Row':'கேபிள் அல்லது இயந்திர ரோ',
+  'Dumbbell Shoulder Press':'டம்ப்பெல் ஷோல்டர் பிரஸ்','Dumbbell or Machine Shoulder Press':'டம்ப்பெல் அல்லது இயந்திர ஷோல்டர் பிரஸ்',
+  'Dumbbell or Band Bicep Curls':'டம்ப்பெல் அல்லது band பைசெப் கர்ல்ஸ்','Towel Isometric Curls':'துணி எதிர்ப்பு பைசெப் பயிற்சி',
+  'Cool-down stretching':'பயிற்சிக்குப் பிந்தைய நீட்டிப்பு','Glute bridges':'குளூட் பிரிட்ஜ்','Reverse lunges':'பின்புற லஞ்சஸ்',
+  'Wall sit':'சுவர் உட்கார்வு','Dumbbell goblet squats':'டம்ப்பெல் கோப்லெட் ஸ்குவாட்ஸ்','Resistance-band squats':'எதிர்ப்பு band ஸ்குவாட்ஸ்',
+  'Step-ups':'படியில் ஏறி இறங்குதல்','Dumbbell split squats':'டம்ப்பெல் ஸ்பிளிட் ஸ்குவாட்ஸ்','Hack squat':'ஹேக் ஸ்குவாட்',
+  'Barbell squats':'பார்பெல் ஸ்குவாட்ஸ்','Incline push-ups':'சாய்வு புஷ்-அப்','Knee push-ups':'முழங்கால் புஷ்-அப்',
+  'Standard push-ups':'சாதாரண புஷ்-அப்','Dumbbell floor press':'தரையில் டம்ப்பெல் பிரஸ்','Resistance-band chest press':'எதிர்ப்பு band செஸ்ட் பிரஸ்',
+  'Dumbbell bench press':'டம்ப்பெல் பெஞ்ச் பிரஸ்','Cable chest press':'கேபிள் செஸ்ட் பிரஸ்','Pec deck machine':'பெக் டெக் இயந்திரம்',
+  'Reverse snow angels':'ரிவர்ஸ் ஸ்னோ ஏஞ்சல்ஸ்','Superman pulls':'சூப்பர்மேன் புல்ஸ்','Prone Y-T raises':'Y-T ரைஸ் பயிற்சி',
+  'Resistance-band pulldowns':'எதிர்ப்பு band புல்டவுன்','One-arm band rows':'ஒரு கை band ரோஸ்','Dumbbell rows':'டம்ப்பெல் ரோஸ்',
+  'Seated cable rows':'அமர்ந்து கேபிள் ரோஸ்','Assisted pull-ups':'உதவியுடன் புல்-அப்','Chest-supported rows':'மார்பு ஆதரவுடன் ரோஸ்',
+  'Single-leg glute bridges':'ஒரு கால் குளூட் பிரிட்ஜ்','Towel hamstring curls':'துணி ஹாம்ஸ்ட்ரிங் கர்ல்ஸ்',
+  'Stability-ball leg curls':'ஸ்டெபிலிட்டி பால் லெக் கர்ல்ஸ்','Dumbbell Romanian deadlifts':'டம்ப்பெல் ரோமானியன் டெட்லிஃப்ட்',
+  'Romanian deadlifts':'ரோமானியன் டெட்லிஃப்ட்','Cable pull-throughs':'கேபிள் புல்-த்ரூ','Hip thrusts':'ஹிப் த்ரஸ்ட்',
+  'Wall push-ups':'சுவர் புஷ்-அப்','Plank shoulder taps':'பிளாங்க் ஷோல்டர் டேப்ஸ்','Band shoulder press':'band ஷோல்டர் பிரஸ்',
+  'Dumbbell lateral raises':'டம்ப்பெல் லேட்டரல் ரைஸ்','Landmine press':'லேண்ட்மைன் பிரஸ்','Seated dumbbell press':'அமர்ந்து டம்ப்பெல் பிரஸ்',
+  'Shoulder-press machine':'ஷோல்டர் பிரஸ் இயந்திரம்','Brisk outdoor walk':'வேக நடை','Marching in place':'அதே இடத்தில் மார்ச் பயிற்சி',
+  'Jump rope':'கயிறு தாண்டுதல்','Stationary-bike ride':'நிலையான சைக்கிள்','Stair climbing':'படிக்கட்டு ஏறுதல்',
+  'Elliptical trainer':'எலிப்டிக்கல் பயிற்சி','Rowing machine':'ரோயிங் இயந்திரம்',
+  'Breakfast':'காலை உணவு','Morning snack':'காலை சிற்றுண்டி','Lunch':'மதிய உணவு','Evening snack':'மாலை சிற்றுண்டி','Dinner':'இரவு உணவு',
+  'Adjust portions to your needs.':'உங்கள் தேவைக்கு ஏற்ப உணவு அளவை மாற்றுங்கள்.','A simple snack idea.':'எளிய சிற்றுண்டி யோசனை.',
+  'Free sample menu based on your selected food type, cuisine, and avoid options. Check ingredients carefully for allergies; these are general meal ideas, not medical advice.':'நீங்கள் தேர்ந்தெடுத்த உணவு வகை மற்றும் சமையல் முறையை வைத்து உருவாக்கிய மாதிரி மெனு. ஒவ்வாமைக்கு பொருட்களைச் சரிபார்க்கவும்; இது மருத்துவ ஆலோசனை அல்ல.',
+  'Sample plan (no AI provider configured)':'மாதிரி திட்டம் (AI இணைக்கப்படவில்லை)',
+  'Try: “I did 10 pushups in 5 minutes”':'சொல்லிப் பாருங்கள்: “10 புஷ்-அப் 5 நிமிடம் செய்தேன்”',
+  'Voice entry needs a supported browser such as Chrome or Edge.':'குரல் பதிவுக்கு Chrome அல்லது Edge போன்ற browser தேவை.',
+  'Listening… say your exercise, reps, and time.':'கேட்கிறது… பயிற்சி, முறை எண்ணிக்கை, நேரத்தைச் சொல்லுங்கள்.',
+  'No speech heard. Tap and try again.':'குரல் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.',
+  'Allow microphone access in your browser, then try again.':'Browser-ல் microphone அனுமதி கொடுத்து மீண்டும் முயற்சிக்கவும்.',
+  'Couldn’t hear that clearly. Tap and try once more.':'தெளிவாகக் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.',
+  'Microphone is busy. Try again in a moment.':'Microphone பயன்படுத்தப்படுகிறது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.',
+  'Generating…':'உருவாக்குகிறது…','AI-generated plan':'AI உருவாக்கிய திட்டம்','Sample plan (no AI provider configured)':'மாதிரி திட்டம் (AI இணைக்கப்படவில்லை)',
+  'Monday · Rest':'திங்கள் · ஓய்வு'
+};
+const englishText = Object.fromEntries(Object.entries(tamilText).map(([english, tamil]) => [tamil, english]));
+let appLanguage = localStorage.getItem('fittrack_language') === 'ta' ? 'ta' : 'en';
+function translateText(value, language = appLanguage) {
+  const trim = value.trim();
+  const dict = language === 'ta' ? tamilText : englishText;
+  if (dict[trim]) return value.replace(trim, dict[trim]);
+  const badgeText = trim.match(/^([🏅🔒]\s+)(.+)$/u);
+  if (badgeText && dict[badgeText[2]]) return value.replace(trim, badgeText[1] + dict[badgeText[2]]);
+  if (language === 'ta') {
+    let match = trim.match(/^Today: ([\d,.]+) ml logged$/);
+    if (match) return value.replace(trim, 'இன்று: ' + match[1] + ' மி.லி. பதிவு');
+    match = trim.match(/^· today: ([\d,.]+) kcal$/);
+    if (match) return value.replace(trim, '· இன்று: ' + match[1] + ' கலோரி');
+    match = trim.match(/^([\d,.]+) min(?: · ([\d,.]+) reps)?$/);
+    if (match) return value.replace(trim, match[1] + ' நிமிடம்' + (match[2] ? ' · ' + match[2] + ' முறை' : ''));
+    match = trim.match(/^([\d,.]+) kcal$/);
+    if (match) return value.replace(trim, match[1] + ' கலோரி');
+    match = trim.match(/^([\d,.]+) ml$/);
+    if (match) return value.replace(trim, match[1] + ' மி.லி.');
+    match = trim.match(/^([\d,.]+) kg$/);
+    if (match) return value.replace(trim, match[1] + ' கி.கி.');
+    match = trim.match(/^BMI · (Underweight|Normal|Overweight|Obese)$/);
+    if (match) return value.replace(trim, 'உடல் நிறை குறியீடு · ' + tamilText[match[1]]);
+  } else {
+    let match = trim.match(/^இன்று: ([\d,.]+) மி.லி. பதிவு$/);
+    if (match) return value.replace(trim, 'Today: ' + match[1] + ' ml logged');
+    match = trim.match(/^· இன்று: ([\d,.]+) கலோரி$/);
+    if (match) return value.replace(trim, '· today: ' + match[1] + ' kcal');
+    match = trim.match(/^([\d,.]+) நிமிடம்(?: · ([\d,.]+) முறை)?$/);
+    if (match) return value.replace(trim, match[1] + ' min' + (match[2] ? ' · ' + match[2] + ' reps' : ''));
+    match = trim.match(/^([\d,.]+) கலோரி$/);
+    if (match) return value.replace(trim, match[1] + ' kcal');
+    match = trim.match(/^([\d,.]+) மி.லி.$/);
+    if (match) return value.replace(trim, match[1] + ' ml');
+    match = trim.match(/^([\d,.]+) கி.கி.$/);
+    if (match) return value.replace(trim, match[1] + ' kg');
+    match = trim.match(/^உடல் நிறை குறியீடு · (குறைந்த எடை|சாதாரணம்|அதிக எடை|உடல் பருமன்)$/);
+    if (match) return value.replace(trim, 'BMI · ' + englishText[match[1]]);
+  }
+  return value;
+}
+function translateSubtree(root) {
+  if (root.nodeType === Node.TEXT_NODE) {
+    const translated = translateText(root.nodeValue);
+    if (translated !== root.nodeValue) root.nodeValue = translated;
+    return;
+  }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    const translated = translateText(node.nodeValue);
+    if (translated !== node.nodeValue) node.nodeValue = translated;
+  }
+  if (root.nodeType === Node.ELEMENT_NODE) {
+    for (const element of [root, ...root.querySelectorAll('*')]) {
+      for (const attr of ['placeholder', 'aria-label', 'title', 'data-coach-question', 'label']) {
+        if (element.hasAttribute(attr)) {
+          const translated = translateText(element.getAttribute(attr));
+          if (translated !== element.getAttribute(attr)) element.setAttribute(attr, translated);
+        }
+      }
+    }
+  }
+}
+function setLanguage(language) {
+  appLanguage = language === 'ta' ? 'ta' : 'en';
+  localStorage.setItem('fittrack_language', appLanguage);
+  document.documentElement.lang = appLanguage;
+  document.title = appLanguage === 'ta' ? 'AI FitTrack — உடற்தகுதி வழிகாட்டி' : 'AI FitTrack — Your fitness, in rhythm';
+  translateSubtree(document.body);
+  $('#language-toggle').textContent = appLanguage === 'ta' ? 'English' : 'தமிழ்';
+  $('#language-toggle').setAttribute('aria-label', appLanguage === 'ta' ? 'Switch to English' : 'தமிழுக்கு மாற்று');
+}
+$('#language-toggle').onclick = () => setLanguage(appLanguage === 'ta' ? 'en' : 'ta');
+setLanguage(appLanguage);
+new MutationObserver(records => records.forEach(record => {
+  if (record.type === 'characterData') translateSubtree(record.target);
+  if (record.type === 'childList') record.addedNodes.forEach(node => translateSubtree(node));
+  if (record.type === 'attributes') translateSubtree(record.target);
+})).observe(document.body, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'aria-label', 'title', 'data-coach-question', 'label']});
 let user = null, token = localStorage.getItem('fittrack_token');
 
 function toast(msg) {
@@ -270,7 +472,7 @@ const FOODS = {'Idli (2 pieces)':130,'Dosa (1 plain)':150,'Vada (1)':150,'Pongal
   'Poori (2)':300,'Chapati (1)':100,'Parotta (1)':260,'Plain rice (1 cup)':200,'Curd rice (1 cup)':250,
   'Sambar (1 bowl)':100,'Half veg meal':500,'Full veg meal':700,'Chicken curry (1 bowl)':250,'Chicken biryani (1 plate)':550,
   'Sundal (1 bowl)':150,'Egg (boiled, 1)':80,'Banana (1)':100,'Filter coffee':80,'Tea with milk and sugar':70};
-$('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${n}">`).join('');
+$('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${esc(n)}" label="${esc(appLanguage === 'ta' ? (tamilText[n] || n) : n)}">`).join('');
 $('#f-meal').elements.food_name.addEventListener('input', e => {
   if (FOODS[e.target.value]) $('#f-meal').elements.calories.value = FOODS[e.target.value];
 });
@@ -278,7 +480,7 @@ $('#f-meal').elements.food_name.addEventListener('input', e => {
 // Delete buttons (works for both workouts and meals)
 document.addEventListener('click', async e => {
   const b = e.target.closest('.del'); if (!b) return;
-  if (!confirm('Delete this entry?')) return;
+  if (!confirm(appLanguage === 'ta' ? 'இந்த பதிவை நீக்கவா?' : 'Delete this entry?')) return;
   try { await api(`/users/${user.id}/${b.dataset.kind}/${b.dataset.id}`, 'DELETE'); await refresh(); }
   catch (err) { toast(err.message); }
 });
@@ -377,15 +579,17 @@ $('#f-meal').onsubmit = submitTo('meals');
 $('#f-water').onsubmit = submitTo('water');
 $('#f-weight').onsubmit = submitTo('weight');
 
-const spokenNumbers = {zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20};
+const spokenNumbers = {zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, 'ஒன்று': 1, 'ஒரு': 1, 'இரண்டு': 2, 'மூன்று': 3, 'நான்கு': 4, 'ஐந்து': 5, 'ஆறு': 6, 'ஏழு': 7, 'எட்டு': 8, 'ஒன்பது': 9, 'பத்து': 10, 'பதினொன்று': 11, 'பன்னிரண்டு': 12, 'பதின்மூன்று': 13, 'பதினான்கு': 14, 'பதினைந்து': 15, 'பதினாறு': 16, 'பதினேழு': 17, 'பதினெட்டு': 18, 'பத்தொன்பது': 19, 'இருபது': 20};
 const numberPattern = '(?:\\d+|' + Object.keys(spokenNumbers).join('|') + ')';
 function spokenNumber(value) { return /^\d+$/.test(value) ? Number(value) : spokenNumbers[value.toLowerCase()]; }
 function parseWorkoutSpeech(transcript) {
   let text = transcript.toLowerCase().replace(/[,.!?]/g, ' ').replace(/\s+/g, ' ').trim();
-  const durationMatch = text.match(new RegExp('\\b(?:in|for)\\s+(' + numberPattern + ')\\s+(?:minutes?|mins?)\\b|\\b(' + numberPattern + ')\\s+(?:minutes?|mins?)\\b', 'i'));
-  const duration = durationMatch ? spokenNumber(durationMatch[1] || durationMatch[2]) : null;
+  const durationUnits = '(?:minutes?|mins?|நிமிடங்கள்?|நிமிடம்)';
+  const durationMatch = text.match(new RegExp('(?:^|\\s)(?:(?:in|for)\\s+)?(' + numberPattern + ')\\s+' + durationUnits + '(?:\\s|$)', 'i'));
+  const duration = durationMatch ? spokenNumber(durationMatch[1]) : null;
   if (durationMatch) text = text.replace(durationMatch[0], ' ');
-  text = text.replace(/^(?:i\s+)?(?:have\s+)?(?:just\s+)?(?:did|completed|finished|logged|performed)\s+/i, '')
+  text = text.replace(/^(?:(?:i\s+)?(?:have\s+)?(?:just\s+)?(?:did|completed|finished|logged|performed)\s+|நான்\s+(?:இன்று\s+)?)/i, '')
+    .replace(/\s*(?:செய்தேன்|முடித்தேன்|பயிற்சி செய்தேன்)$/i, '')
     .replace(/\b(today|this morning|this afternoon|this evening)\b/g, '').replace(/\s+/g, ' ').trim();
   let reps = null;
   let match = text.match(new RegExp('^(' + numberPattern + ')\\s+(?:reps?\\s+(?:of\\s+)?)?(.+)$', 'i'));
@@ -404,8 +608,10 @@ $('#voice-workout').onclick = () => {
   if (!SpeechRecognition) { $('#voice-status').textContent = 'Voice entry needs a supported browser such as Chrome or Edge.'; return; }
   const button = $('#voice-workout'), status = $('#voice-status');
   const recognition = new SpeechRecognition();
-  recognition.lang = 'en-IN'; recognition.interimResults = false; recognition.maxAlternatives = 1;
-  recognition.onstart = () => { button.disabled = true; status.textContent = 'Listening… say your exercise, reps, and time.'; };
+  recognition.lang = appLanguage === 'ta' ? 'ta-IN' : 'en-IN'; recognition.interimResults = false; recognition.maxAlternatives = 1;
+  const listeningText = appLanguage === 'ta' ? 'கேட்கிறது… பயிற்சி, முறை எண்ணிக்கை, நேரத்தைச் சொல்லுங்கள்.' : 'Listening… say your exercise, reps, and time.';
+  const noSpeechText = appLanguage === 'ta' ? 'குரல் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.' : 'No speech heard. Tap and try again.';
+  recognition.onstart = () => { button.disabled = true; status.textContent = listeningText; };
   recognition.onresult = event => {
     const transcript = event.results[0][0].transcript;
     try {
@@ -413,13 +619,15 @@ $('#voice-workout').onclick = () => {
       form.elements.exercise_name.value = result.exercise;
       if (result.reps !== null) form.elements.reps.value = result.reps;
       if (result.duration !== null) form.elements.duration_minutes.value = result.duration;
-      status.textContent = `Heard: “${transcript}” — review the fields, then tap Add workout.`;
+      status.textContent = appLanguage === 'ta' ? 'கேட்டது: “' + transcript + '” — புலங்களைச் சரிபார்த்து பயிற்சியைச் சேர்க்கவும்.' : 'Heard: “' + transcript + '” — review the fields, then tap Add workout.';
     } catch (error) { status.textContent = error.message; }
   };
   recognition.onerror = event => {
-    status.textContent = event.error === 'not-allowed' ? 'Allow microphone access in your browser, then try again.' : 'Couldn’t hear that clearly. Tap and try once more.';
+    status.textContent = event.error === 'not-allowed'
+      ? (appLanguage === 'ta' ? 'Browser-ல் microphone அனுமதி கொடுத்து மீண்டும் முயற்சிக்கவும்.' : 'Allow microphone access in your browser, then try again.')
+      : (appLanguage === 'ta' ? 'தெளிவாகக் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.' : 'Couldn’t hear that clearly. Tap and try once more.');
   };
-  recognition.onend = () => { button.disabled = false; if (status.textContent === 'Listening… say your exercise, reps, and time.') status.textContent = 'No speech heard. Tap and try again.'; };
+  recognition.onend = () => { button.disabled = false; if (status.textContent === listeningText) status.textContent = noSpeechText; };
   try { recognition.start(); } catch (_) { button.disabled = false; status.textContent = 'Microphone is busy. Try again in a moment.'; }
 };
 
@@ -473,7 +681,8 @@ const exerciseAlternatives = {
 $('#find-alternative').onclick = () => {
   const equipment = $('#plan-equipment').value;
   const names = exerciseAlternatives[$('#busy-exercise').value][equipment];
-  $('#alternative-result').innerHTML = `<span class="badge">${esc($('#plan-equipment').selectedOptions[0].textContent)} options</span>` +
+  const optionsLabel = appLanguage === 'ta' ? ' உபகரணத்திற்கான மாற்றுகள்' : ' options';
+  $('#alternative-result').innerHTML = `<span class="badge">${esc($('#plan-equipment').selectedOptions[0].textContent)}${optionsLabel}</span>` +
     names.map((name, index) => `<div class="alternative-option"><span class="alternative-number">${index + 1}</span><b>${esc(name)}</b></div>`).join('') +
     '<p class="muted">Pick one that feels comfortable and use a manageable effort.</p>';
 };
@@ -501,7 +710,7 @@ $('#coach-form').onsubmit = async event => {
   addCoachMessage('user', message);
   button.disabled = true; button.textContent = 'Thinking…'; status.textContent = 'Coach is preparing a reply…';
   try {
-    const result = await api(`/users/${user.id}/coach`, 'POST', {message, history: coachHistory.slice(-8)});
+    const result = await api(`/users/${user.id}/coach`, 'POST', {message, history: coachHistory.slice(-8), language: appLanguage});
     addCoachMessage('assistant', result.reply, result.source);
     coachHistory.push({role: 'user', content: message}, {role: 'assistant', content: result.reply});
     coachHistory = coachHistory.slice(-8);
@@ -520,8 +729,8 @@ $('#gen').onclick = async () => {
     });
     const label = d.is_ai_generated ? 'AI-generated plan' : 'Sample plan (no AI provider configured)';
     $('#plan').innerHTML = `<span class="badge">${label}</span>` + d.plan.days.map(day => `
-      <div class="day"><b>${esc(day.day)}</b> · ${esc(day.focus)}${day.duration_minutes ? ` · ${esc(day.duration_minutes)} min` : ''}
-      ${day.exercises.map(x => `<div class="muted">${esc(x.name)} — ${esc(x.sets)} × ${esc(x.reps)}</div>`).join('')}</div>`).join('');
+      <div class="day"><b>${esc(day.day)}</b> · <span>${esc(day.focus)}</span>${day.duration_minutes ? ` · ${esc(day.duration_minutes)} min` : ''}
+      ${day.exercises.map(x => `<div class="muted"><span>${esc(x.name)}</span> — ${esc(x.sets)} × ${esc(x.reps)}</div>`).join('')}</div>`).join('');
   } catch (err) { toast(err.message); }
   $('#gen').disabled = false; $('#gen').textContent = 'Generate plan';
 };

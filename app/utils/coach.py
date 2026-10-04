@@ -16,7 +16,7 @@ SYSTEM_PROMPT = (
 )
 
 
-def _call_ai_provider(user, message, history):
+def _call_ai_provider(user, message, history, language):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise RuntimeError("No AI provider configured")
@@ -30,6 +30,10 @@ def _call_ai_provider(user, message, history):
         f"experience {user['experience_level']}, workouts per week {user['workout_days_per_week']}. "
         "Use this only as context; do not infer medical facts."
     )
+    if language == "ta":
+        system += " Reply in Tamil."
+    else:
+        system += " Reply in English."
     payload = {
         "model": "claude-sonnet-4-6",
         "max_tokens": 500,
@@ -56,11 +60,29 @@ def _call_ai_provider(user, message, history):
     return answer[:2000]
 
 
-def _fallback_reply(user, message):
+def _fallback_reply(user, message, language):
     """Small, transparent offline helper; it is not presented as generative AI."""
     text = message.lower()
     goal = user["fitness_goal"]
     level = user["experience_level"]
+    if language == "ta":
+        if any(word in text for word in ("pain", "hurt", "injury", "வலி", "காயம்", "மூச்சு", "மயக்கம்")):
+            return "வலி, தலைச்சுற்றல், மார்பு அசௌகரியம் அல்லது மூச்சுத்திணறல் ஏற்பட்டால் உடற்பயிற்சியை நிறுத்துங்கள். கடுமையான அல்லது நீடிக்கும் அறிகுறிகளுக்கு தகுதியான மருத்துவரை அணுகுங்கள். காயத்தை நான் கண்டறிய முடியாது."
+        if any(word in text for word in ("sore", "recovery", "rest", "sleep", "ஓய்வு", "தூக்கம்", "சோர்வு", "வலி")):
+            return "மீளுர்வுக்கு போதிய தூக்கம், தண்ணீர், ஓய்வு உதவும். வசதியாக இருந்தால் மெதுவான இயக்கம் செய்யலாம்; வலி தரும் பயிற்சியைத் தவிர்க்கவும். வலி கடுமையாகவோ நீடித்தாலோ நிபுணரை அணுகுங்கள்."
+        if any(word in text for word in ("food", "meal", "diet", "protein", "சாப்பாடு", "உணவு", "புரதம்")):
+            return "பொதுவாக, உங்களுக்கு விருப்பமான உணவில் புரதம் தரும் உணவு, காய்கறி அல்லது பழம், நிறைவான கார்போஹைட்ரேட் ஆகியவற்றைச் சேர்க்கலாம். ஒவ்வாமை அல்லது உடல்நலத் தேவைகளுக்கு நிபுணரிடம் உறுதிப்படுத்துங்கள்."
+        if any(word in text for word in ("motivat", "lazy", "consisten", "ஊக்கம்", "தொடர்ச்சி")):
+            return "இன்றைய இலக்கைச் சிறியதாக வையுங்கள்—10 நிமிட நடை அல்லது ஒரு எளிய set கூட நல்ல தொடக்கம். முதலில் தொடர்ச்சியை உருவாக்கி, பிறகு மெதுவாக நேரம் அல்லது முயற்சியை அதிகரியுங்கள்."
+        if any(word in text for word in ("form", "technique", "squat", "deadlift", "push-up", "pushup", "exercise", "பயிற்சி")):
+            return f"{level} நிலைக்கு ஏற்றவாறு, வசதியான இயக்க வரம்பில் மெதுவாகவும் கட்டுப்பாட்டுடனும் செய்யுங்கள். வலி ஏற்பட்டால் நிறுத்துங்கள். சரியான நுட்பத்துக்கு தகுதியான பயிற்சியாளரிடம் நேரில் ஆலோசனை பெறுங்கள்."
+        goal_tip = {
+            "build_muscle": "வலிமைப் பயிற்சியை ஓய்வு நாட்களுடன் தொடர்ந்து செய்து, சவாலை மெதுவாக அதிகரிக்கவும்.",
+            "lose_weight": "உங்களுக்கு பிடித்த இயக்கத்தைத் தொடர்ந்து செய்யுங்கள்; உணவு மற்றும் செயல்பாட்டில் சிறிய மாற்றங்களைச் செய்யுங்கள். கடுமையான diet-ஐத் தவிர்க்கவும்.",
+            "endurance": "நடை அல்லது சைக்கிளை வசதியான வேகத்தில் தொடங்கி, நேரத்தையோ வேகத்தையோ மெதுவாக அதிகரிக்கவும்.",
+            "general_fitness": "நடை, எளிய வலிமைப் பயிற்சி, ஓய்வு நாட்கள் ஆகியவற்றை வாரத்தில் சேர்க்கலாம்.",
+        }.get(goal, "விருப்பமான இயக்கம், எளிய வலிமைப் பயிற்சி, ஓய்வு நாட்கள் ஆகியவற்றை வாரத்தில் சேர்க்கலாம்.")
+        return f"உங்கள் குறிக்கோள்: {goal_tip} அடுத்து எதில் உதவி வேண்டும்?"
 
     if any(word in text for word in ("chest pain", "dizzy", "faint", "shortness of breath", "sharp pain", "injury", "injured", "hurt", "pain")):
         return (
@@ -102,8 +124,8 @@ def _fallback_reply(user, message):
     return f"For your {goal.replace('_', ' ')} goal: {goal_tip} What would you like help with next?"
 
 
-def get_coach_reply(user, message, history):
+def get_coach_reply(user, message, history, language="en"):
     try:
-        return _call_ai_provider(user, message, history), "ai"
+        return _call_ai_provider(user, message, history, language), "ai"
     except Exception:
-        return _fallback_reply(user, message), "guided"
+        return _fallback_reply(user, message, language), "guided"

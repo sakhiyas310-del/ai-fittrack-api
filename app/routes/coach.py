@@ -44,5 +44,6 @@ def ask_coach(user_id):
     if user is None:
         return error_response(f"User with id {user_id} not found.", 404)
 
-    reply, source = get_coach_reply(user, message, history)
+    language = "ta" if data.get("language") == "ta" else "en"
+    reply, source = get_coach_reply(user, message, history, language)
     return success_response({"reply": reply, "source": source})
