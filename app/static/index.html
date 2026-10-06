@@ -665,12 +665,42 @@ function chart(h) {
 }
 
 // ---------- forms ----------
+let workoutSoundContext = null;
+function prepareWorkoutSuccessSound() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+  try {
+    workoutSoundContext ||= new AudioContextClass();
+    if (workoutSoundContext.state === 'suspended') workoutSoundContext.resume().catch(() => {});
+  } catch (_) { workoutSoundContext = null; }
+}
+async function playWorkoutSuccessSound() {
+  if (!workoutSoundContext) return;
+  try {
+    if (workoutSoundContext.state === 'suspended') await workoutSoundContext.resume();
+    if (workoutSoundContext.state !== 'running') return;
+    [523.25, 659.25, 783.99].forEach((frequency, index) => {
+      const start = workoutSoundContext.currentTime + index * 0.12;
+      const tone = workoutSoundContext.createOscillator();
+      const volume = workoutSoundContext.createGain();
+      tone.type = 'sine';
+      tone.frequency.setValueAtTime(frequency, start);
+      volume.gain.setValueAtTime(0.0001, start);
+      volume.gain.exponentialRampToValueAtTime(0.12, start + 0.025);
+      volume.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
+      tone.connect(volume); volume.connect(workoutSoundContext.destination);
+      tone.start(start); tone.stop(start + 0.3);
+    });
+  } catch (_) { /* Sound is optional; never interrupt saving a workout. */ }
+}
 const submitTo = (path, after) => safe(async f => {
   await api(`/users/${user.id}/${path}`, 'POST', formData(f));
   f.reset(); f.querySelectorAll('input[type=date]').forEach(i => i.value = today());
-  await refresh(); if (after) after();
+  if (after) await after();
+  await refresh();
 });
-$('#f-workout').onsubmit = submitTo('workouts');
+$('#f-workout').addEventListener('submit', prepareWorkoutSuccessSound, {capture: true});
+$('#f-workout').onsubmit = submitTo('workouts', playWorkoutSuccessSound);
 $('#f-meal').onsubmit = submitTo('meals');
 $('#f-water').onsubmit = submitTo('water');
 $('#f-weight').onsubmit = submitTo('weight');
