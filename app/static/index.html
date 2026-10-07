@@ -5,68 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI FitTrack — Your fitness, in rhythm</title>
 <style>
-:root{color-scheme:dark;--bg:#101413;--card:#181e1b;--text:#f5f4ec;--muted:#a5afa8;--line:#303b34;--accent:#c7f36b;--accent2:#d9ff91;--ink:#18200f;--danger:#ff8177;--soft:#29351e}
+:root{color-scheme:dark;--bg:#101413;--panel:#181e1b;--panel2:#202824;--text:#f5f4ec;--muted:#a5afa8;--line:#303b34;--accent:#c7f36b;--accent2:#d9ff91;--ink:#18200f;--danger:#ff8177;--soft:#29351e}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 78% -12%,#293427 0,transparent 36%),var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
 .wrap{max-width:1080px;margin:0 auto;padding:28px 30px 56px}header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:4px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px}h1{font-size:1.05rem;letter-spacing:.02em;margin:0;display:flex;align-items:center;gap:10px}h1:before{content:'+';display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:var(--accent);color:var(--ink);font-size:1.45rem;font-weight:500}h2{font-size:1.12rem;margin:0 0 14px;letter-spacing:-.02em}
 .card{background:linear-gradient(145deg,#1b221e,#171c19 75%);border:1px solid var(--line);border-radius:19px;padding:23px;margin-bottom:17px;box-shadow:0 12px 35px #0002}.tabs{display:flex;gap:8px;overflow-x:auto;margin:20px 0 16px;padding-bottom:2px}.tabs button{flex:1;white-space:nowrap;background:#171d19;color:var(--muted);border:1px solid var(--line);border-radius:12px;padding:11px 16px;font:inherit;font-weight:650;cursor:pointer;transition:.2s}.tabs button:hover{border-color:#68745d;color:var(--text)}.tabs button.on{background:var(--accent);color:var(--ink);border-color:var(--accent)}
 form{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{display:flex;flex-direction:column;font-size:.82rem;font-weight:600;color:#c3ccc4;gap:6px}.full{grid-column:1/-1}input,select,textarea{width:100%;font:inherit;color:var(--text);background:#101512;border:1px solid #344037;border-radius:11px;padding:11px 12px;outline:none;transition:border .18s,box-shadow .18s}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #c7f36b1a}button.primary{background:var(--accent);color:var(--ink);border:0;border-radius:11px;padding:12px 18px;font:inherit;font-weight:750;cursor:pointer;transition:transform .18s,filter .18s}button.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}button.primary:disabled{opacity:.6;cursor:wait}button.link{background:none;border:0;color:var(--accent);cursor:pointer;font:inherit;padding:0}button.del{color:var(--danger)}
-.item{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}.muted{color:var(--muted);font-size:.88rem}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:14px}.stat{background:linear-gradient(140deg,#273321,#20291d);border:1px solid #3d4b33;border-radius:14px;padding:14px;text-align:left}.stat b{display:block;font-size:1.35rem;color:var(--accent);letter-spacing:-.03em}.badge{display:inline-block;background:var(--soft);color:var(--accent2);border:1px solid #465632;border-radius:99px;padding:4px 11px;font-size:.77rem;margin-bottom:12px}.badge-list{display:flex;flex-wrap:wrap;gap:8px}.achievement{border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:.8rem}.achievement.unlocked{background:var(--soft)}.achievement.locked{opacity:.5}.progress-track{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 12px}.progress-fill{height:100%;background:var(--accent)}.avoid-options{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:12px}.check-option{display:inline-flex;flex-direction:row;align-items:center;gap:5px}.check-option input{width:auto;padding:0}.day{border-top:1px solid var(--line);padding:13px 0}.day:first-of-type{border-top:0}
-#welcome:not(.hide){display:grid;grid-template-columns:1fr 1fr;gap:0 18px}#welcome>.welcome-hero{grid-column:1/-1}#welcome>.card{margin-bottom:18px}
-#app>.app-hero,.welcome-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;min-height:255px;padding:30px 36px;border-radius:23px;background:linear-gradient(112deg,#27351e 0%,#1c261c 48%,#18201d 100%);border:1px solid #3b4c31;box-shadow:0 20px 55px #0003}.eyebrow{display:inline-block;color:var(--accent);font-size:.73rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero-copy h2{font-size:clamp(2rem,5vw,3.5rem);line-height:1.04;max-width:560px;margin:12px 0}.hero-copy p{max-width:500px;color:#c1cbbf;margin:0 0 17px}.hero-pills{display:flex;flex-wrap:wrap;gap:8px}.hero-pills span{font-size:.77rem;color:#dce7d5;border:1px solid #53634b;background:#1b251b;border-radius:99px;padding:5px 10px}.hero-art{position:relative;min-height:190px;display:grid;place-items:center}.hero-orbit{width:176px;height:176px;border:1px solid #718b50;border-radius:50%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 40px #c7f36b12,0 0 50px #c7f36b10}.hero-orbit:before,.hero-orbit:after{content:'';position:absolute;border:1px solid #91a86b66;border-radius:50%;inset:17px}.hero-orbit:after{inset:35px;border-style:dashed}.hero-orbit b{font-size:2rem;color:var(--accent);letter-spacing:.12em}.hero-orbit i{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent);top:24px;right:25px}.hero-note{position:absolute;bottom:0;right:0;background:#111712dd;border:1px solid #53634b;border-radius:12px;padding:9px 13px;color:#b8c5b4;font-size:.68rem;letter-spacing:.1em}.hero-note b{display:block;color:var(--accent);font-size:.86rem;letter-spacing:0;margin-top:1px}
-#who{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#171d19;color:#dce5dc;font-size:.82rem}#who .link{border-left:1px solid var(--line);padding-left:9px;color:var(--accent);font-weight:700}
-.card h2{display:flex;align-items:center;gap:10px}.card h2:before{content:'';width:4px;height:20px;border-radius:4px;background:var(--accent);flex:0 0 4px}
-.header-actions{display:flex;align-items:center;gap:10px}.language-toggle{border:1px solid #526044;border-radius:999px;background:#20291d;color:var(--accent2);padding:8px 12px;font:inherit;font-size:.82rem;font-weight:750;cursor:pointer}.language-toggle:hover{border-color:var(--accent);background:#29351e}
-input,select,button.primary,.voice-button{min-height:44px}.voice-tools{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:2px}.voice-button{border:1px solid #526044;border-radius:10px;background:#20291d;color:var(--accent2);padding:8px 12px;font:inherit;font-size:.84rem;font-weight:700;cursor:pointer}.voice-button:hover{border-color:var(--accent);background:#29351e}.voice-button:disabled{opacity:.6;cursor:wait}
-.alternative-result{margin-top:16px}.alternative-option{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.alternative-option:first-child{border-top:0}.alternative-number{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:800}.alternative-option b{display:block;color:var(--text)}
-.coach-card{max-width:850px;margin-inline:auto}.coach-prompts{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.prompt-chip{border:1px solid var(--line);border-radius:999px;background:#202824;color:#dce5dc;padding:8px 12px;font:inherit;font-size:.8rem;cursor:pointer}.prompt-chip:hover{border-color:var(--accent);color:var(--accent2)}.coach-messages{display:flex;flex-direction:column;gap:10px;max-height:390px;overflow-y:auto;padding:15px;background:#111713;border:1px solid var(--line);border-radius:15px;scroll-behavior:smooth}.coach-message{max-width:88%;padding:12px 14px;border-radius:14px;line-height:1.55;overflow-wrap:anywhere}.coach-assistant{align-self:flex-start;background:#222a24;border:1px solid #354239;color:var(--text);border-bottom-left-radius:4px}.coach-user{align-self:flex-end;background:#c7f36b;color:#19210f;border-bottom-right-radius:4px}.coach-label{display:block;font-size:.66rem;font-weight:800;letter-spacing:.11em;color:#b3d77d;margin-bottom:4px}.coach-user .coach-label{color:#455629}.coach-form{margin-top:13px}.coach-safety{margin:13px 1px 0;font-size:.77rem}.coach-status{color:var(--accent2);font-size:.8rem;min-height:1.2em}
-input,select,button.primary{min-height:44px}.hero-orbit:after{animation:orbit 32s linear infinite}@keyframes orbit{to{transform:rotate(360deg)}}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c7f36b99;outline-offset:3px}::selection{background:#c7f36b55;color:var(--text)}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#7f2625;color:#fff;padding:11px 17px;border-radius:11px;display:none;max-width:90%;box-shadow:0 10px 35px #0007;z-index:10}.hide{display:none}
-@media(max-width:680px){.wrap{padding:16px 15px 36px}.card{padding:18px}.tabs{gap:6px}.tabs button{padding:9px 11px}.app-hero,.welcome-hero{grid-template-columns:1fr!important;padding:24px!important}.hero-art{display:none!important}}@media(max-width:520px){form{grid-template-columns:1fr}.full{grid-column:auto}header{margin-bottom:17px}#who{font-size:.73rem;padding:6px 8px}.tabs button{font-size:.83rem;padding:9px 8px}#welcome:not(.hide){grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-/* Colorful fitness dashboard */
-:root{--bg:#10111d;--card:#191b2c;--text:#f7f7ff;--muted:#b1b4cd;--line:#343650;--accent:#b9ff66;--accent2:#d8ff9b;--ink:#171b12;--danger:#ff7b88;--soft:#292c45}
-body{background:radial-gradient(ellipse at 8% 4%,#7639bd30 0,transparent 31%),radial-gradient(ellipse at 92% 18%,#00c8d321 0,transparent 28%),radial-gradient(ellipse at 55% 100%,#ff7a3d12 0,transparent 35%),var(--bg)}
-h1:before{background:linear-gradient(135deg,#b9ff66,#38e5ce);box-shadow:0 5px 18px #6fffb333}
-.card{background:linear-gradient(145deg,#202238,#191b2b 76%);border-color:#383a59;box-shadow:0 16px 38px #07081255;position:relative;overflow:hidden}
-.card:after{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,#a978ff,#40dfd0 55%,#b9ff66);opacity:.85}
-.card h2:before{background:linear-gradient(180deg,#ae75ff,#4ee4d2)}
-#app>.app-hero,.welcome-hero{background:radial-gradient(circle at 84% 22%,#fa8b6645,transparent 24%),linear-gradient(118deg,#42236e 0%,#292650 44%,#134b57 100%);border-color:#69549a;box-shadow:0 24px 60px #08081288}
-.eyebrow{color:#d8ff91}.hero-copy p{color:#e0def5}.hero-pills span{border-color:#ffffff38;background:#17152f99;color:#f0edff}
-.hero-orbit{border-color:#c49bff;box-shadow:inset 0 0 42px #bc8aff27,0 0 50px #42e6d322}.hero-orbit:before,.hero-orbit:after{border-color:#d2b2ff77}.hero-orbit b{color:#d8ff91}.hero-orbit i{background:#58f0dc;box-shadow:0 0 22px #58f0dc}.hero-note{background:#17142dcc;border-color:#ffffff47;color:#ddd9f4}.hero-note b{color:#d8ff91}
-.tabs button{background:linear-gradient(145deg,#202238,#191b2a);border-color:#383a59;color:#b9bdd6}.tabs button:hover{border-color:#a978ff;color:#fff}.tabs button.on{background:linear-gradient(100deg,#9d6bff,#6c75ff 52%,#39d9d0);color:#fff;border-color:transparent;box-shadow:0 7px 22px #8b62ff44}
-button.primary{background:linear-gradient(105deg,#bdff6a,#6ce6b8 58%,#48dbe0);color:#131b19;box-shadow:0 7px 18px #63e9b926}.language-toggle,.voice-button{border-color:#62558d;background:linear-gradient(135deg,#30264a,#1b3340);color:#dcceff}.language-toggle:hover,.voice-button:hover{border-color:#bc91ff;background:#342a50}
-input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select:focus,textarea:focus{border-color:#b385ff;box-shadow:0 0 0 3px #b385ff2c}
-.stats{gap:13px}.stat{background:linear-gradient(145deg,#272943,#202238);border-color:#414464;box-shadow:inset 0 1px #ffffff08}.stat b{color:#c6ff78}.stat:nth-child(3n+2){background:linear-gradient(145deg,#282443,#211d37);border-color:#514273}.stat:nth-child(3n+2) b{color:#c5a5ff}.stat:nth-child(3n){background:linear-gradient(145deg,#1e343d,#1b2935);border-color:#31515e}.stat:nth-child(3n) b{color:#65eadb}
-.badge{background:#30294a;color:#e0cfff;border-color:#65518e}.achievement.unlocked{background:linear-gradient(110deg,#283c30,#252744);border-color:#4f7660}.progress-track{background:#30324b}.progress-fill{background:linear-gradient(90deg,#9f6dff,#4cdddc,#b9ff66);border-radius:99px}
-.item{border-color:#363850}.coach-messages{background:#131524;border-color:#393b59}.coach-assistant{background:linear-gradient(130deg,#26213c,#1e2b37);border-color:#48405f}.coach-user{background:linear-gradient(110deg,#b9ff66,#59dfc5);color:#182019}.coach-label{color:#c6a5ff}.coach-user .coach-label{color:#365529}.prompt-chip{background:#22243a;border-color:#414361;color:#e4e2f6}.prompt-chip:hover{border-color:#b184ff;color:#dfccff}.coach-status{color:#70ead9}
-.day{border-color:#363850}.alternative-number{background:#30294a;color:#d6bdff}.alternative-option b{color:#f6f4ff}::selection{background:#a978ff77;color:#fff}
-.mascot-stage{width:min(100%,300px);height:208px;display:flex;align-items:end;justify-content:center;gap:7px;position:relative;filter:drop-shadow(0 15px 15px #07081255)}.mascot-stage:before{content:'';position:absolute;width:88%;height:22px;bottom:8px;border-radius:50%;background:#10142588;filter:blur(3px)}.tiny-doll{width:31%;height:184px;position:relative;z-index:1;overflow:visible;animation:doll-bob 3.2s ease-in-out infinite}.tiny-doll:nth-child(2){animation-delay:.45s;transform:scale(1.08)}.tiny-doll:nth-child(3){animation-delay:.9s}.tiny-doll .doll-shadow{fill:#10142566}.tiny-doll .skin{fill:#ffd0ad}.tiny-doll .hair{fill:#382749}.tiny-doll .face{fill:#24213a}.tiny-doll .shirt-a{fill:#b9ff66}.tiny-doll .shirt-b{fill:#ff8d79}.tiny-doll .shirt-c{fill:#65e7dc}.tiny-doll .shorts{fill:#b49aff}.tiny-doll .shoe{fill:#fff2bc}.mascot-sparkle{position:absolute;color:#d8ff9b;font-size:20px;font-weight:900;animation:sparkle 2s ease-in-out infinite}.mascot-sparkle.one{top:15px;left:13%}.mascot-sparkle.two{right:11%;top:47px;color:#ffb69c;animation-delay:.7s}@keyframes doll-bob{0%,100%{translate:0 0}50%{translate:0 -7px}}@keyframes sparkle{0%,100%{opacity:.45;scale:.8}50%{opacity:1;scale:1.2}}
-@media(max-width:680px){.hero-art{display:grid!important;min-height:195px}.mascot-stage{height:190px}.tiny-doll{height:164px}}
-.daily-motivation{display:flex;align-items:center;gap:13px;margin:0 0 17px;padding:13px 17px;border:1px solid #675394;border-radius:15px;background:linear-gradient(105deg,#30234c,#203345 68%,#203b38);box-shadow:0 10px 25px #08081244}.motivation-icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#c2ff6c,#63e5d0);color:#202038;font-size:21px}.motivation-copy{min-width:0}.motivation-label{color:#d5bcff;font-size:.68rem;font-weight:850;letter-spacing:.13em}.daily-motivation p{margin:2px 0 0;color:#fff;font-size:.98rem;font-weight:650}.motivation-spark{margin-left:auto;color:#ffbd92;font-size:22px}
-.streak-calendar{margin:17px 0 10px;padding:15px;border:1px solid #414361;border-radius:15px;background:linear-gradient(145deg,#191a2b,#1d2033)}.calendar-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.calendar-top strong{font-size:.95rem}.calendar-legend{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.74rem}.calendar-legend-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#b9ff66,#56e3c5);box-shadow:0 0 10px #8bff9b66}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}.calendar-weekday{padding:3px 0;color:#aaaed0;font-size:.72rem;font-weight:750}.calendar-day{display:grid;place-items:center;aspect-ratio:1;max-width:40px;width:100%;margin:auto;border:1px solid transparent;border-radius:11px;color:#d1d3e3;font-size:.8rem}.calendar-day.active{background:linear-gradient(145deg,#334b37,#214846);border-color:#70dba0;color:#e1ffd8;font-weight:800;box-shadow:inset 0 0 13px #73ffae18}.calendar-day.today{outline:2px solid #b58aff;outline-offset:1px}.calendar-day.empty{visibility:hidden}
-@media(max-width:520px){.streak-calendar{padding:11px}.calendar-grid{gap:4px}.calendar-day{border-radius:9px;font-size:.75rem}}
+.item{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}.muted{color:var(--muted);font-size:.88rem}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:14px}.stat{background:linear-gradient(140deg,#273321,#20291d);border:1px solid #3d4b33;border-radius:14px;padding:14px;text-align:left}.stat b{display:block;font-size:1.35rem;color:var(--accent);letter-spacing:-.03em}.badge{display:inline-block;background:var(--soft);color:var(--accent2);border:1px solid #465632;border-radius:99px;padding:4px 11px;font-size:.77rem;margin-bottom:12px}.day{border-top:1px solid var(--line);padding:13px 0}.day:first-of-type{border-top:0}
+#welcome>.card:first-child{max-width:510px}#app>.app-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;min-height:255px;padding:30px 36px;border-radius:23px;background:linear-gradient(112deg,#27351e 0%,#1c261c 48%,#18201d 100%);border:1px solid #3b4c31;box-shadow:0 20px 55px #0003}.eyebrow{display:inline-block;color:var(--accent);font-size:.73rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero-copy h2{font-size:clamp(2rem,5vw,3.5rem);line-height:1.04;max-width:560px;margin:12px 0}.hero-copy p{max-width:500px;color:#c1cbbf;margin:0 0 17px}.hero-pills{display:flex;flex-wrap:wrap;gap:8px}.hero-pills span{font-size:.77rem;color:#dce7d5;border:1px solid #53634b;background:#1b251b;border-radius:99px;padding:5px 10px}.hero-art{position:relative;min-height:190px;display:grid;place-items:center}.hero-orbit{width:176px;height:176px;border:1px solid #718b50;border-radius:50%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 40px #c7f36b12,0 0 50px #c7f36b10}.hero-orbit:before,.hero-orbit:after{content:'';position:absolute;border:1px solid #91a86b66;border-radius:50%;inset:17px}.hero-orbit:after{inset:35px;border-style:dashed}.hero-orbit b{font-size:2rem;color:var(--accent);letter-spacing:.12em}.hero-orbit i{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent);top:24px;right:25px}.hero-note{position:absolute;bottom:0;right:0;background:#111712dd;border:1px solid #53634b;border-radius:12px;padding:9px 13px;color:#b8c5b4;font-size:.68rem;letter-spacing:.1em}.hero-note b{display:block;color:var(--accent);font-size:.86rem;letter-spacing:0;margin-top:1px}.hide{display:none}#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#7f2625;color:#fff;padding:11px 17px;border-radius:11px;display:none;max-width:90%;box-shadow:0 10px 35px #0007;z-index:10}
+.history-controls{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin:12px 0}.history-month{margin:18px 0 4px;color:var(--accent);font-size:.86rem;letter-spacing:.08em;text-transform:uppercase}.history-empty{padding:18px 0}
+@media(max-width:680px){.wrap{padding:16px 15px 36px}.card{padding:18px}.tabs{gap:6px}.tabs button{padding:9px 11px}.app-hero{grid-template-columns:1fr!important;padding:24px!important}.hero-art{display:none!important}.history-controls{grid-template-columns:1fr}}
+@media(max-width:480px){form{grid-template-columns:1fr}.full{grid-column:auto}header{margin-bottom:17px}.tabs button{font-size:.83rem;padding:9px 8px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>AI FitTrack</h1>
-    <div class="header-actions"><button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language">தமிழ்</button><div id="who" class="muted"></div></div>
+    <div id="who" class="muted"></div>
   </header>
 
   <!-- Step 1: create or load a profile -->
   <section id="welcome" class="hide">
-    <div class="welcome-hero">
-      <div class="hero-copy"><span class="eyebrow">AI FitTrack · Your fitness, in rhythm</span><h2>Your best days<br>start with a plan.</h2>
-        <p>Make room for movement, meals that suit you, and progress you can actually see.</p>
-        <div class="hero-pills"><span>YOUR ROUTINE</span><span>YOUR PACE</span><span>YOUR PROGRESS</span></div>
-      </div>
-      <div class="hero-art" aria-hidden="true"><div class="mascot-stage"><span class="mascot-sparkle one">✦</span><span class="mascot-sparkle two">✧</span>
-        <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><path d="M38 54 Q50 43 62 55 L68 103 Q50 113 32 103Z" class="shirt-a"/><circle class="skin" cx="50" cy="36" r="20"/><path class="hair" d="M30 37 Q27 10 51 13 Q74 13 70 42 Q63 29 53 28 Q42 38 30 37Z"/><circle class="face" cx="44" cy="37" r="1.8"/><circle class="face" cx="57" cy="37" r="1.8"/><path d="M46 45 Q51 49 56 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path d="M35 63 L18 83 L26 93 M65 63 L81 80 L74 89" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path class="shorts" d="M33 101 L67 101 L64 120 L52 120 L49 111 L45 120 L34 120Z"/><path d="M41 117 L38 158 M59 117 L64 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M60 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
-        <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><circle class="skin" cx="51" cy="36" r="20"/><path class="hair" d="M31 37 Q28 11 51 13 Q75 14 71 42 Q67 29 54 27 Q43 37 31 37Z"/><circle class="face" cx="45" cy="37" r="1.8"/><circle class="face" cx="58" cy="37" r="1.8"/><path d="M47 45 Q52 49 57 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path class="shirt-b" d="M38 56 Q50 48 63 56 L70 100 L31 100Z"/><path d="M37 64 L20 45 M64 64 L81 43" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path d="M15 41 L24 41 M77 39 L86 39" stroke="#d7d9e9" stroke-width="4" stroke-linecap="round"/><path class="shorts" d="M32 98 L69 98 L64 120 L53 120 L50 110 L46 120 L35 120Z"/><path d="M42 117 L38 158 M60 117 L65 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M61 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
-        <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><circle class="skin" cx="51" cy="36" r="20"/><path class="hair" d="M31 37 Q28 11 51 13 Q75 14 71 42 Q64 30 54 28 Q42 38 31 37Z"/><circle class="face" cx="45" cy="37" r="1.8"/><circle class="face" cx="58" cy="37" r="1.8"/><path d="M47 45 Q52 49 57 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path class="shirt-c" d="M38 56 Q50 48 63 56 L70 100 L31 100Z"/><path d="M36 65 L20 82 L30 94 M64 65 L80 82 L72 93" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path class="shorts" d="M32 98 L69 98 L64 120 L53 120 L50 110 L46 120 L35 120Z"/><path d="M42 117 L38 158 M60 117 L65 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M61 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
-      </div><div class="hero-note">A FRESH START<b>Starts right here</b></div></div>
-    </div>
     <div class="card">
       <h2>Log in</h2>
       <form id="f-login">
@@ -102,37 +61,45 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
         <p>A little consistency goes a long way. Track your training, find meals that fit, and keep building a stronger you.</p>
         <div class="hero-pills"><span>TRAIN</span><span>EAT WELL</span><span>KEEP GOING</span></div>
       </div>
-      <div class="hero-art" aria-hidden="true"><div class="mascot-stage"><span class="mascot-sparkle one">✦</span><span class="mascot-sparkle two">✧</span>
-        <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><path d="M38 54 Q50 43 62 55 L68 103 Q50 113 32 103Z" class="shirt-a"/><circle class="skin" cx="50" cy="36" r="20"/><path class="hair" d="M30 37 Q27 10 51 13 Q74 13 70 42 Q63 29 53 28 Q42 38 30 37Z"/><circle class="face" cx="44" cy="37" r="1.8"/><circle class="face" cx="57" cy="37" r="1.8"/><path d="M46 45 Q51 49 56 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path d="M35 63 L18 83 L26 93 M65 63 L81 80 L74 89" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path class="shorts" d="M33 101 L67 101 L64 120 L52 120 L49 111 L45 120 L34 120Z"/><path d="M41 117 L38 158 M59 117 L64 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M60 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
-        <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><circle class="skin" cx="51" cy="36" r="20"/><path class="hair" d="M31 37 Q28 11 51 13 Q75 14 71 42 Q67 29 54 27 Q43 37 31 37Z"/><circle class="face" cx="45" cy="37" r="1.8"/><circle class="face" cx="58" cy="37" r="1.8"/><path d="M47 45 Q52 49 57 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path class="shirt-b" d="M38 56 Q50 48 63 56 L70 100 L31 100Z"/><path d="M37 64 L20 45 M64 64 L81 43" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path d="M15 41 L24 41 M77 39 L86 39" stroke="#d7d9e9" stroke-width="4" stroke-linecap="round"/><path class="shorts" d="M32 98 L69 98 L64 120 L53 120 L50 110 L46 120 L35 120Z"/><path d="M42 117 L38 158 M60 117 L65 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M61 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
-        <svg class="tiny-doll" viewBox="0 0 100 190"><ellipse class="doll-shadow" cx="50" cy="179" rx="30" ry="6"/><circle class="skin" cx="51" cy="36" r="20"/><path class="hair" d="M31 37 Q28 11 51 13 Q75 14 71 42 Q64 30 54 28 Q42 38 31 37Z"/><circle class="face" cx="45" cy="37" r="1.8"/><circle class="face" cx="58" cy="37" r="1.8"/><path d="M47 45 Q52 49 57 44" fill="none" stroke="#d36f74" stroke-width="2" stroke-linecap="round"/><path class="shirt-c" d="M38 56 Q50 48 63 56 L70 100 L31 100Z"/><path d="M36 65 L20 82 L30 94 M64 65 L80 82 L72 93" fill="none" stroke="#ffd0ad" stroke-width="8" stroke-linecap="round"/><path class="shorts" d="M32 98 L69 98 L64 120 L53 120 L50 110 L46 120 L35 120Z"/><path d="M42 117 L38 158 M60 117 L65 157" fill="none" stroke="#ffd0ad" stroke-width="9" stroke-linecap="round"/><path class="shoe" d="M34 157 Q28 167 39 169 L47 165 L46 159Z M61 157 Q58 168 70 167 L76 163 L68 158Z"/></svg>
-      </div><div class="hero-note">BUILT AROUND YOU<b>One step at a time</b></div></div>
+      <div class="hero-art" aria-hidden="true"><div class="hero-orbit"><i></i><b>FIT</b></div><div class="hero-note">BUILT AROUND YOU<b>One step at a time</b></div></div>
     </div>
-    <aside class="daily-motivation" aria-live="polite"><span class="motivation-icon">✦</span><div class="motivation-copy"><span id="motivation-label" class="motivation-label">TODAY'S MOTIVATION</span><p id="daily-quote">Small steps today build a stronger you.</p></div><span class="motivation-spark" aria-hidden="true">✧</span></aside>
     <nav class="tabs" id="tabs">
       <button data-tab="workouts" class="on">Workouts</button>
+      <button data-tab="history">Full History</button>
       <button data-tab="meals">Meals</button>
-      <button data-tab="water">Water</button>
       <button data-tab="progress">Progress</button>
       <button data-tab="plan">Plan</button>
-      <button data-tab="coach">Coach</button>
     </nav>
 
     <div id="t-workouts" class="tab">
-      <div class="card"><h2>Weekly consistency &amp; badges</h2><div id="workout-consistency"></div></div>
       <div class="card"><h2>Log a workout</h2>
         <form id="f-workout">
-          <label class="full">Exercise
-            <input name="exercise_name" required placeholder="e.g. Push-ups">
-            <span class="voice-tools"><button class="voice-button" id="voice-workout" type="button">🎙 Speak workout</button><span id="voice-status" class="muted" aria-live="polite">Try: “I did 10 pushups in 5 minutes”</span></span>
-          </label>
-          <label>Reps (optional)<input name="reps" type="number" min="1" step="1" placeholder="e.g. 10"></label>
+          <label>Exercise<input name="exercise_name" required></label>
           <label>Minutes<input name="duration_minutes" type="number" min="1" step="1" required></label>
           <label>Date<input name="date" type="date" required></label>
           <label>Notes (optional)<input name="notes"></label>
           <button class="primary full">Add workout</button>
         </form></div>
-      <div class="card"><h2>History</h2><div id="l-workouts"></div></div>
+      <div class="card"><h2>Recent workouts</h2><div id="l-workouts"></div>
+        <button class="link" id="view-full-history" type="button" data-tab="history">View full workout history →</button></div>
+    </div>
+
+    <div id="t-history" class="tab hide">
+      <div class="card">
+        <h2>Full workout history</h2>
+        <p class="muted">All workouts saved to your account, newest first.</p>
+        <div class="stats">
+          <div class="stat"><b id="history-total">0</b>Workouts saved</div>
+          <div class="stat"><b id="history-minutes">0</b>Total minutes</div>
+          <div class="stat"><b id="history-days">0</b>Active days</div>
+        </div>
+        <div class="history-controls">
+          <label>Search workouts<input id="history-search" type="search" placeholder="Exercise or notes"></label>
+          <label>Sort by date<select id="history-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+        </div>
+        <p class="muted" id="history-match" aria-live="polite"></p>
+        <div id="l-history"></div>
+      </div>
     </div>
 
     <div id="t-meals" class="tab hide">
@@ -144,35 +111,7 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
           <label>Notes (optional)<input name="notes"></label>
           <button class="primary full">Add meal</button>
         </form></div>
-      <div class="card"><h2>Generate a full-day food plan</h2>
-        <p class="muted">Choose your food type and cuisine. Select any ingredients you want to avoid.</p>
-        <form id="f-meal-plan">
-          <label>Food type<select name="diet"><option value="vegetarian">Vegetarian</option><option value="non_vegetarian">Non-vegetarian</option><option value="vegan">Vegan</option></select></label>
-          <label>Cuisine<select name="cuisine"><option value="south_indian">South Indian</option><option value="north_indian">North Indian</option><option value="any">Any cuisine</option></select></label>
-          <div class="avoid-options"><span class="muted">Avoid:</span>
-            <label class="check-option"><input type="checkbox" name="avoid" value="eggs"> Eggs</label>
-            <label class="check-option"><input type="checkbox" name="avoid" value="dairy"> Dairy</label>
-            <label class="check-option"><input type="checkbox" name="avoid" value="peanuts"> Peanuts</label>
-          </div>
-          <button class="primary full">Generate day plan</button>
-        </form>
-        <div id="meal-plan-result" style="margin-top:14px"></div>
-        <p class="muted">General meal ideas only. Check ingredients carefully for allergies or health needs.</p>
-      </div>
       <div class="card"><h2>History <span id="today-cal" class="muted"></span></h2><div id="l-meals"></div></div>
-    </div>
-
-    <div id="t-water" class="tab hide">
-      <div class="card"><h2>Log water</h2>
-        <p id="today-water" class="muted">Today: 0 ml logged</p>
-        <form id="f-water">
-          <label>Amount (ml)<input name="amount_ml" type="number" min="1" step="1" required></label>
-          <label>Date<input name="date" type="date" required></label>
-          <label class="full">Notes (optional)<input name="notes"></label>
-          <button class="primary full">Add water</button>
-        </form>
-      </div>
-      <div class="card"><h2>Water history</h2><div id="l-water"></div></div>
     </div>
 
     <div id="t-progress" class="tab hide">
@@ -187,48 +126,9 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
 
     <div id="t-plan" class="tab hide">
       <div class="card"><h2>Weekly workout plan</h2>
-        <p class="muted">Your profile and goal are used automatically. Choose your workout time and equipment.</p>
-        <label>Time per workout
-          <select id="plan-duration"><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select>
-        </label>
-        <label>Equipment
-          <select id="plan-equipment"><option value="bodyweight">No equipment</option><option value="home">Dumbbells or resistance band</option><option value="gym">Gym equipment</option></select>
-        </label>
+        <p class="muted">Built from your profile and goal.</p>
         <button class="primary" id="gen">Generate plan</button>
         <div id="plan" style="margin-top:16px"></div></div>
-      <div class="card"><h2>Need an exercise swap?</h2>
-        <p class="muted">Choose a busy machine. Suggestions will match the equipment option above.</p>
-        <label>Busy exercise or machine
-          <select id="busy-exercise">
-            <option value="leg_press">Leg press</option><option value="chest_press">Chest press / bench press</option>
-            <option value="lat_pulldown">Lat pulldown</option><option value="leg_curl">Leg curl</option>
-            <option value="shoulder_press">Shoulder press</option><option value="treadmill">Treadmill</option>
-          </select>
-        </label>
-        <button class="primary" id="find-alternative" type="button" style="margin-top:12px">Find alternatives</button>
-        <div id="alternative-result" class="alternative-result" aria-live="polite"></div>
-      </div>
-    </div>
-
-    <div id="t-coach" class="tab hide">
-      <div class="card coach-card">
-        <h2>Fit Coach</h2>
-        <p id="coach-mode" class="muted">Ask about workouts, recovery, or staying consistent. AI mode uses your configured provider and may have charges; free built-in guidance works without a key. Chat clears when you refresh.</p>
-        <div class="coach-prompts" aria-label="Suggested questions">
-          <button type="button" class="prompt-chip" data-coach-question="What should I focus on for my goal?">My fitness goal</button>
-          <button type="button" class="prompt-chip" data-coach-question="How can I stay consistent with workouts?">Stay consistent</button>
-          <button type="button" class="prompt-chip" data-coach-question="I feel sore after a workout. What should I do?">Recovery advice</button>
-        </div>
-        <div id="coach-messages" class="coach-messages" aria-live="polite">
-          <div class="coach-message coach-assistant"><span class="coach-label">FIT COACH</span><div>Hi! I can help with general workout ideas, recovery habits, and motivation. What would you like help with?</div></div>
-        </div>
-        <p id="coach-status" class="coach-status" aria-live="polite"></p>
-        <form id="coach-form" class="coach-form">
-          <label class="full">Your question<input id="coach-input" name="message" maxlength="500" placeholder="Ask about your workout or fitness goal…" required></label>
-          <button class="primary full" id="coach-send">Ask coach</button>
-        </form>
-        <p class="muted coach-safety">General fitness guidance only—not medical advice. Stop if exercise causes pain, and consult a qualified professional about persistent or severe symptoms.</p>
-      </div>
     </div>
   </section>
 </div>
@@ -239,240 +139,7 @@ input,select,textarea{background:#111321;border-color:#3c3f5b}input:focus,select
 const $ = s => document.querySelector(s);
 const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const tamilText = {
-  'Your fitness, in rhythm':'உங்கள் உடற்தகுதி, உங்கள் தாளத்தில்','Your daily reset':'உங்கள் தினசரி தொடக்கம்',
-  'Your best days':'உங்கள் சிறந்த நாட்கள்','start with a plan.':'ஒரு திட்டத்துடன் தொடங்கட்டும்.',
-  'Make room for movement, meals that suit you, and progress you can actually see.':'உடற்பயிற்சி, உங்களுக்கு ஏற்ற உணவு, உங்கள் முன்னேற்றம்—எல்லாவற்றையும் ஒரே இடத்தில் பாருங்கள்.',
-  'YOUR ROUTINE':'உங்கள் வழக்கம்','YOUR PACE':'உங்கள் வேகம்','YOUR PROGRESS':'உங்கள் முன்னேற்றம்',
-  'A FRESH START':'புதிய தொடக்கம்','Starts right here':'இங்கே தொடங்குங்கள்',
-  'Move with purpose.':'குறிக்கோளுடன் நகருங்கள்.','Feel the progress.':'முன்னேற்றத்தை உணருங்கள்.',
-  'A little consistency goes a long way. Track your training, find meals that fit, and keep building a stronger you.':'தொடர்ச்சியான சிறிய முயற்சிகள் பெரிய மாற்றத்தைத் தரும். உடற்பயிற்சி, உணவு, முன்னேற்றம் ஆகியவற்றை ஒரே இடத்தில் பதிவு செய்யுங்கள்.',
-  'TRAIN':'பயிற்சி','EAT WELL':'நல்ல உணவு','KEEP GOING':'தொடருங்கள்','BUILT AROUND YOU':'உங்களுக்காக உருவாக்கப்பட்டது','One step at a time':'ஒவ்வொரு படியாக',
-  'Log in':'உள்நுழைக','New here? Create your account':'புதியவரா? கணக்கை உருவாக்குங்கள்',
-  'Email':'மின்னஞ்சல்','Password':'கடவுச்சொல்','Password (6+ characters)':'கடவுச்சொல் (குறைந்தது 6 எழுத்துகள்)',
-  'Name':'பெயர்','Age':'வயது','Workout days / week':'வாரத்திற்கான உடற்பயிற்சி நாட்கள்',
-  'Height (cm)':'உயரம் (செ.மீ.)','Weight (kg)':'எடை (கி.கி.)','Goal':'குறிக்கோள்','Experience':'அனுபவம்',
-  'Build muscle':'தசை வளர்ப்பு','Lose weight':'எடை குறைப்பு','Endurance':'தாங்கும் திறன்','General fitness':'பொது உடற்தகுதி',
-  'Beginner':'தொடக்கநிலை','Intermediate':'இடைநிலை','Advanced':'மேம்பட்ட நிலை','Create profile':'கணக்கை உருவாக்கு',
-  'Workouts':'உடற்பயிற்சி','Meals':'உணவு','Water':'தண்ணீர்','Progress':'முன்னேற்றம்','Plan':'திட்டம்','Coach':'வழிகாட்டி',
-  'Weekly consistency & badges':'வாராந்திர தொடர்ச்சி & பதக்கங்கள்','This week':'இந்த வாரம்',
-  'Completed weeks in a row':'தொடர்ச்சியான வாரங்கள்','Active days total':'மொத்த பயிற்சி நாட்கள்','Current day streak':'தொடர்ச்சியான பயிற்சி நாட்கள்',
-  'Workout calendar':'உடற்பயிற்சி நாட்காட்டி','Workout day':'பயிற்சி செய்த நாள்',
-  'First workout':'முதல் பயிற்சி','5 active days':'5 பயிற்சி நாட்கள்','10 active days':'10 பயிற்சி நாட்கள்',
-  '25 active days':'25 பயிற்சி நாட்கள்','Weekly goal reached':'வார இலக்கு நிறைவு',
-  'Counts workout days against your weekly goal. Rest days are expected.':'வார இலக்குடன் உங்கள் பயிற்சி நாட்களை ஒப்பிடுகிறது. ஓய்வு நாட்களும் முக்கியம்.',
-  'Log a workout':'பயிற்சியைப் பதிவு செய்','Exercise':'பயிற்சி','Reps (optional)':'முறை எண்ணிக்கை (விருப்பம்)',
-  'Minutes':'நிமிடங்கள்','Date':'தேதி','Notes (optional)':'குறிப்புகள் (விருப்பம்)','Add workout':'பயிற்சியைச் சேர்',
-  'History':'வரலாறு','No workouts yet.':'இன்னும் பயிற்சிகள் பதிவாகவில்லை.','Delete':'நீக்கு',
-  'Speak workout':'குரலில் பதிவு செய்','Try: “I did 10 pushups in 5 minutes”':'சொல்லிப் பாருங்கள்: “10 புஷ்-அப் 5 நிமிடம் செய்தேன்”',
-  'e.g. Push-ups':'உதா: புஷ்-அப்','e.g. 10':'உதா: 10',
-  'Food (pick from list or type)':'உணவு (பட்டியலில் தேர்வு செய்யவும் அல்லது எழுதவும்)',
-  'Calories (approx.)':'கலோரி (தோராயம்)','Add meal':'உணவைச் சேர்','Log a meal':'உணவைப் பதிவு செய்',
-  'Generate a full-day food plan':'ஒரு நாள் முழு உணவுத் திட்டம்','Choose your food type and cuisine. Select any ingredients you want to avoid.':'உணவு வகை மற்றும் சமையல் முறையைத் தேர்ந்தெடுக்கவும். தவிர்க்க வேண்டியவற்றையும் குறிக்கவும்.',
-  'Food type':'உணவு வகை','Vegetarian':'சைவம்','Non-vegetarian':'அசைவம்','Vegan':'முழு தாவர உணவு',
-  'Cuisine':'சமையல் முறை','South Indian':'தென்னிந்திய','North Indian':'வடஇந்திய','Any cuisine':'எதுவானாலும்',
-  'Avoid:':'தவிர்க்கவும்:','Eggs':'முட்டை','Dairy':'பால் உணவுகள்','Peanuts':'நிலக்கடலை','Generate day plan':'ஒரு நாள் திட்டம் உருவாக்கு',
-  'General meal ideas only. Check ingredients carefully for allergies or health needs.':'இவை பொதுவான உணவு யோசனைகள். ஒவ்வாமை அல்லது உடல்நலத் தேவைகளுக்கு பொருட்களைச் சரிபார்க்கவும்.',
-  'No meals yet.':'இன்னும் உணவுகள் பதிவாகவில்லை.','Generate plan':'திட்டத்தை உருவாக்கு',
-  'Sample plan (AI provider not configured)':'மாதிரி திட்டம் (AI இணைக்கப்படவில்லை)','AI plan from your instructions':'உங்கள் வழிமுறைக்கான AI திட்டம்',
-  'Log water':'தண்ணீரைப் பதிவு செய்','Amount (ml)':'அளவு (மி.லி.)','Add water':'தண்ணீரைச் சேர்',
-  'Water history':'தண்ணீர் வரலாறு','No water entries yet.':'இன்னும் தண்ணீர் பதிவுகள் இல்லை.',
-  'Record your weight':'எடையைப் பதிவு செய்','Save weight':'எடையைச் சேமி',
-  'Weekly workout plan':'வாராந்திர உடற்பயிற்சி திட்டம்',
-  'Your profile and goal are used automatically. Choose your workout time and equipment.':'உங்கள் சுயவிவரம் மற்றும் குறிக்கோளை வைத்து திட்டம் உருவாகும். பயிற்சி நேரம், உபகரணத்தைத் தேர்ந்தெடுக்கவும்.',
-  'Time per workout':'ஒவ்வொரு பயிற்சிக்கான நேரம்','20 minutes':'20 நிமிடங்கள்','30 minutes':'30 நிமிடங்கள்','45 minutes':'45 நிமிடங்கள்',
-  'Equipment':'உபகரணம்','No equipment':'உபகரணம் இல்லை','Dumbbells or resistance band':'டம்ப்பெல் அல்லது resistance band','Gym equipment':'ஜிம் உபகரணம்',
-  'Need an exercise swap?':'மாற்றுப் பயிற்சி வேண்டுமா?','Choose a busy machine. Suggestions will match the equipment option above.':'பயன்பாட்டில் இருக்கும் இயந்திரத்தைத் தேர்ந்தெடுக்கவும். மேலே தேர்ந்தெடுத்த உபகரணத்திற்கு ஏற்ற பயிற்சிகள் வரும்.',
-  'Busy exercise or machine':'பயன்பாட்டில் இருக்கும் பயிற்சி / இயந்திரம்','Leg press':'Leg press','Chest press / bench press':'Chest press / bench press',
-  'Lat pulldown':'Lat pulldown','Leg curl':'Leg curl','Shoulder press':'Shoulder press','Treadmill':'Treadmill',
-  'Find alternatives':'மாற்றுப் பயிற்சிகளைக் காட்டு','Pick one that feels comfortable and use a manageable effort.':'உங்களுக்கு வசதியான ஒன்றைத் தேர்ந்தெடுத்து மெதுவாகத் தொடங்குங்கள்.',
-  'Fit Coach':'உடற்பயிற்சி வழிகாட்டி','My fitness goal':'என் குறிக்கோள்','Stay consistent':'தொடர்ச்சியாகச் செய்வது','Recovery advice':'ஓய்வு ஆலோசனை',
-  'Your question':'உங்கள் கேள்வி','Ask coach':'வழிகாட்டியிடம் கேளுங்கள்','Thinking…':'யோசிக்கிறது…',
-  'General fitness guidance only—not medical advice. Stop if exercise causes pain, and consult a qualified professional about persistent or severe symptoms.':'இது பொதுவான உடற்பயிற்சி வழிகாட்டுதல்; மருத்துவ ஆலோசனை அல்ல. வலி ஏற்பட்டால் நிறுத்தி, கடுமையான அல்லது நீடிக்கும் அறிகுறிகளுக்கு நிபுணரை அணுகவும்.',
-  'Idli (2 pieces)':'இட்லி (2)','Dosa (1 plain)':'தோசை (1)','Vada (1)':'வடை (1)','Pongal (1 bowl)':'பொங்கல் (1 கிண்ணம்)',
-  'Upma (1 bowl)':'உப்புமா (1 கிண்ணம்)','Poori (2)':'பூரி (2)','Chapati (1)':'சப்பாத்தி (1)','Parotta (1)':'பரோட்டா (1)',
-  'Plain rice (1 cup)':'சாதம் (1 கப்)','Curd rice (1 cup)':'தயிர் சாதம் (1 கப்)','Sambar (1 bowl)':'சாம்பார் (1 கிண்ணம்)',
-  'Half veg meal':'அரை சைவ சாப்பாடு','Full veg meal':'முழு சைவ சாப்பாடு','Chicken curry (1 bowl)':'கோழிக் குழம்பு (1 கிண்ணம்)',
-  'Chicken biryani (1 plate)':'கோழி பிரியாணி (1 தட்டு)','Sundal (1 bowl)':'சுண்டல் (1 கிண்ணம்)',
-  'Egg (boiled, 1)':'வேகவைத்த முட்டை (1)','Banana (1)':'வாழைப்பழம் (1)','Filter coffee':'ஃபில்டர் காபி',
-  'Tea with milk and sugar':'பால் சர்க்கரை தேநீர்','Bodyweight Squats':'உடல் எடையுடன் உட்கார்ந்து எழுதல்',
-  'Push-ups':'புஷ்-அப்','Brisk Walk or Jog':'வேக நடை அல்லது மெதுவோட்டம்','Plank':'பிளாங்க்',
-  'Jumping Jacks':'ஜம்பிங் ஜாக்ஸ்','Bicycle Crunches':'பைசிக்கிள் கிரஞ்சஸ்','Superman Holds':'சூப்பர்மேன் ஹோல்ட்ஸ்',
-  'Pike Push-ups':'பைக் புஷ்-அப்','Bicep Curls':'பைசெப் கர்ல்ஸ்','Shoulder Press':'ஷோல்டர் பிரஸ்',
-  'Tricep Dips':'டிரைசெப் டிப்ஸ்','Lunges':'லஞ்சஸ்','Calf Raises':'குதிகால் உயர்த்துதல்',
-  'Monday':'திங்கள்','Tuesday':'செவ்வாய்','Wednesday':'புதன்','Thursday':'வியாழன்','Friday':'வெள்ளி','Saturday':'சனி','Sunday':'ஞாயிறு','Rest':'ஓய்வு',
-  'No water entries yet.':'இன்னும் தண்ணீர் பதிவுகள் இல்லை.','Add at least two weight entries to see a chart.':'வரைபடத்தைப் பார்க்க குறைந்தது இரண்டு எடைப் பதிவுகள் தேவை.',
-  'Underweight':'குறைந்த எடை','Normal':'சாதாரணம்','Overweight':'அதிக எடை','Obese':'உடல் பருமன்',
-  'Start (kg)':'தொடக்கம் (கி.கி.)','Now (kg)':'இப்போது (கி.கி.)','Change (kg)':'மாற்றம் (கி.கி.)',
-  'Free built-in guidance':'இலவச அடிப்படை வழிகாட்டுதல்','AI-powered reply':'AI பதில்',
-  'Coach is preparing a reply…':'வழிகாட்டி பதில் தயாரிக்கிறார்…','YOU':'நீங்கள்','AI COACH':'AI வழிகாட்டி',
-  'Quick Coach':'வழிகாட்டி','BMI':'உடல் நிறை குறியீடு',
-  'Ask about workouts, recovery, or staying consistent. AI mode uses your configured provider and may have charges; free built-in guidance works without a key. Chat clears when you refresh.':'உடற்பயிற்சி, ஓய்வு, தொடர்ச்சி பற்றி கேளுங்கள். AI சேவைக்கு கட்டணம் இருக்கலாம்; key இல்லாமலும் இலவச வழிகாட்டுதல் கிடைக்கும். Refresh செய்தால் உரையாடல் அழியும்.',
-  'QUICK COACH':'வழிகாட்டி','FIT COACH':'பயிற்சி வழிகாட்டி','No workout plan yet.':'உடற்பயிற்சி திட்டம் இன்னும் உருவாக்கப்படவில்லை.',
-  'Could not reach the coach. Check your connection and try again.':'Coach-ஐ அணுக முடியவில்லை. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
-  'Exercise name wasn’t clear. Try saying “I did 10 pushups in 5 minutes”.':'பயிற்சியின் பெயர் தெளிவாகக் கேட்கவில்லை. மீண்டும் சொல்லிப் பாருங்கள்.',
-  'What should I focus on for my goal?':'என் குறிக்கோளுக்காக எதில் கவனம் செலுத்தலாம்?',
-  'How can I stay consistent with workouts?':'உடற்பயிற்சியைத் தொடர்ச்சியாகச் செய்வது எப்படி?',
-  'I feel sore after a workout. What should I do?':'பயிற்சிக்குப் பிறகு தசை வலிக்கிறது. என்ன செய்யலாம்?',
-  'Ask about your workout or fitness goal…':'உடற்பயிற்சி அல்லது குறிக்கோள் பற்றி கேளுங்கள்…',
-  'No workout plan yet.':'உடற்பயிற்சி திட்டம் இன்னும் உருவாக்கப்படவில்லை.','Log out':'வெளியேறு',
-  'What should I focus on for my goal?':'என் குறிக்கோளுக்காக எதில் கவனம் செலுத்தலாம்?',
-  'How can I stay consistent with workouts?':'உடற்பயிற்சியைத் தொடர்ச்சியாகச் செய்வது எப்படி?',
-  'I feel sore after a workout. What should I do?':'பயிற்சிக்குப் பிறகு தசை வலிக்கிறது. என்ன செய்யலாம்?',
-  'Ask about your workout or fitness goal…':'உடற்பயிற்சி அல்லது குறிக்கோள் பற்றி கேளுங்கள்…',
-  'AI mode uses your configured provider and may have charges; free built-in guidance works without a key. Chat clears when you refresh.':'AI பதில்களுக்கு கட்டணம் இருக்கலாம்; key இல்லாமலும் இலவச அடிப்படை வழிகாட்டுதல் கிடைக்கும். Refresh செய்தால் உரையாடல் அழியும்.',
-  'Hi! I can help with general workout ideas, recovery habits, and motivation. What would you like help with?':'வணக்கம்! உடற்பயிற்சி யோசனைகள், ஓய்வு, ஊக்கம் பற்றி பொதுவான உதவி தருகிறேன். உங்களுக்கு என்ன உதவி வேண்டும்?',
-  'Full Body + Cardio':'முழு உடல் + கார்டியோ','Cardio + Core':'கார்டியோ + வயிற்றுப் பகுதி','Full Body Strength':'முழு உடல் வலிமை',
-  'Push (Chest/Shoulders/Triceps)':'புஷ் (மார்பு/தோள்/டிரைசெப்ஸ்)','Pull (Back/Biceps)':'புல் (முதுகு/பைசெப்ஸ்)','Legs':'கால்கள்',
-  'Cardio Intervals':'இடைவேளை கார்டியோ','Steady-State Cardio':'சீரான கார்டியோ','Cardio + Mobility':'கார்டியோ + உடல் நெகிழ்வு',
-  'Jog, Cycle, or Swim':'மெதுவோட்டம், சைக்கிள் அல்லது நீச்சல்','Dynamic Stretching':'இயக்க நீட்டிப்புகள்',
-  'Bent-over Rows':'முன்வளைந்து ரோஸ்','Bent-over Rows (light weight/band)':'முன்வளைந்து ரோஸ் (குறைந்த எடை/band)',
-  'Dumbbell or Band Rows':'டம்ப்பெல் அல்லது band ரோஸ்','Cable or Machine Row':'கேபிள் அல்லது இயந்திர ரோ',
-  'Dumbbell Shoulder Press':'டம்ப்பெல் ஷோல்டர் பிரஸ்','Dumbbell or Machine Shoulder Press':'டம்ப்பெல் அல்லது இயந்திர ஷோல்டர் பிரஸ்',
-  'Dumbbell or Band Bicep Curls':'டம்ப்பெல் அல்லது band பைசெப் கர்ல்ஸ்','Towel Isometric Curls':'துணி எதிர்ப்பு பைசெப் பயிற்சி',
-  'Cool-down stretching':'பயிற்சிக்குப் பிந்தைய நீட்டிப்பு','Glute bridges':'குளூட் பிரிட்ஜ்','Reverse lunges':'பின்புற லஞ்சஸ்',
-  'Wall sit':'சுவர் உட்கார்வு','Dumbbell goblet squats':'டம்ப்பெல் கோப்லெட் ஸ்குவாட்ஸ்','Resistance-band squats':'எதிர்ப்பு band ஸ்குவாட்ஸ்',
-  'Step-ups':'படியில் ஏறி இறங்குதல்','Dumbbell split squats':'டம்ப்பெல் ஸ்பிளிட் ஸ்குவாட்ஸ்','Hack squat':'ஹேக் ஸ்குவாட்',
-  'Barbell squats':'பார்பெல் ஸ்குவாட்ஸ்','Incline push-ups':'சாய்வு புஷ்-அப்','Knee push-ups':'முழங்கால் புஷ்-அப்',
-  'Standard push-ups':'சாதாரண புஷ்-அப்','Dumbbell floor press':'தரையில் டம்ப்பெல் பிரஸ்','Resistance-band chest press':'எதிர்ப்பு band செஸ்ட் பிரஸ்',
-  'Dumbbell bench press':'டம்ப்பெல் பெஞ்ச் பிரஸ்','Cable chest press':'கேபிள் செஸ்ட் பிரஸ்','Pec deck machine':'பெக் டெக் இயந்திரம்',
-  'Reverse snow angels':'ரிவர்ஸ் ஸ்னோ ஏஞ்சல்ஸ்','Superman pulls':'சூப்பர்மேன் புல்ஸ்','Prone Y-T raises':'Y-T ரைஸ் பயிற்சி',
-  'Resistance-band pulldowns':'எதிர்ப்பு band புல்டவுன்','One-arm band rows':'ஒரு கை band ரோஸ்','Dumbbell rows':'டம்ப்பெல் ரோஸ்',
-  'Seated cable rows':'அமர்ந்து கேபிள் ரோஸ்','Assisted pull-ups':'உதவியுடன் புல்-அப்','Chest-supported rows':'மார்பு ஆதரவுடன் ரோஸ்',
-  'Single-leg glute bridges':'ஒரு கால் குளூட் பிரிட்ஜ்','Towel hamstring curls':'துணி ஹாம்ஸ்ட்ரிங் கர்ல்ஸ்',
-  'Stability-ball leg curls':'ஸ்டெபிலிட்டி பால் லெக் கர்ல்ஸ்','Dumbbell Romanian deadlifts':'டம்ப்பெல் ரோமானியன் டெட்லிஃப்ட்',
-  'Romanian deadlifts':'ரோமானியன் டெட்லிஃப்ட்','Cable pull-throughs':'கேபிள் புல்-த்ரூ','Hip thrusts':'ஹிப் த்ரஸ்ட்',
-  'Wall push-ups':'சுவர் புஷ்-அப்','Plank shoulder taps':'பிளாங்க் ஷோல்டர் டேப்ஸ்','Band shoulder press':'band ஷோல்டர் பிரஸ்',
-  'Dumbbell lateral raises':'டம்ப்பெல் லேட்டரல் ரைஸ்','Landmine press':'லேண்ட்மைன் பிரஸ்','Seated dumbbell press':'அமர்ந்து டம்ப்பெல் பிரஸ்',
-  'Shoulder-press machine':'ஷோல்டர் பிரஸ் இயந்திரம்','Brisk outdoor walk':'வேக நடை','Marching in place':'அதே இடத்தில் மார்ச் பயிற்சி',
-  'Jump rope':'கயிறு தாண்டுதல்','Stationary-bike ride':'நிலையான சைக்கிள்','Stair climbing':'படிக்கட்டு ஏறுதல்',
-  'Elliptical trainer':'எலிப்டிக்கல் பயிற்சி','Rowing machine':'ரோயிங் இயந்திரம்',
-  'Breakfast':'காலை உணவு','Morning snack':'காலை சிற்றுண்டி','Lunch':'மதிய உணவு','Evening snack':'மாலை சிற்றுண்டி','Dinner':'இரவு உணவு',
-  'Adjust portions to your needs.':'உங்கள் தேவைக்கு ஏற்ப உணவு அளவை மாற்றுங்கள்.','A simple snack idea.':'எளிய சிற்றுண்டி யோசனை.',
-  'Free sample menu based on your selected food type, cuisine, and avoid options. Check ingredients carefully for allergies; these are general meal ideas, not medical advice.':'நீங்கள் தேர்ந்தெடுத்த உணவு வகை மற்றும் சமையல் முறையை வைத்து உருவாக்கிய மாதிரி மெனு. ஒவ்வாமைக்கு பொருட்களைச் சரிபார்க்கவும்; இது மருத்துவ ஆலோசனை அல்ல.',
-  'Sample plan (no AI provider configured)':'மாதிரி திட்டம் (AI இணைக்கப்படவில்லை)',
-  'Try: “I did 10 pushups in 5 minutes”':'சொல்லிப் பாருங்கள்: “10 புஷ்-அப் 5 நிமிடம் செய்தேன்”',
-  'Voice entry needs a supported browser such as Chrome or Edge.':'குரல் பதிவுக்கு Chrome அல்லது Edge போன்ற browser தேவை.',
-  'Listening… say your exercise, reps, and time.':'கேட்கிறது… பயிற்சி, முறை எண்ணிக்கை, நேரத்தைச் சொல்லுங்கள்.',
-  'No speech heard. Tap and try again.':'குரல் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.',
-  'Allow microphone access in your browser, then try again.':'Browser-ல் microphone அனுமதி கொடுத்து மீண்டும் முயற்சிக்கவும்.',
-  'Couldn’t hear that clearly. Tap and try once more.':'தெளிவாகக் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.',
-  'Microphone is busy. Try again in a moment.':'Microphone பயன்படுத்தப்படுகிறது. சிறிது நேரம் கழித்து முயற்சிக்கவும்.',
-  'Generating…':'உருவாக்குகிறது…','AI-generated plan':'AI உருவாக்கிய திட்டம்','Sample plan (no AI provider configured)':'மாதிரி திட்டம் (AI இணைக்கப்படவில்லை)',
-  'Monday · Rest':'திங்கள் · ஓய்வு'
-};
-const englishText = Object.fromEntries(Object.entries(tamilText).map(([english, tamil]) => [tamil, english]));
-let appLanguage = localStorage.getItem('fittrack_language') === 'ta' ? 'ta' : 'en';
-function translateText(value, language = appLanguage) {
-  const trim = value.trim();
-  const dict = language === 'ta' ? tamilText : englishText;
-  if (dict[trim]) return value.replace(trim, dict[trim]);
-  const badgeText = trim.match(/^([🏅🔒]\s+)(.+)$/u);
-  if (badgeText && dict[badgeText[2]]) return value.replace(trim, badgeText[1] + dict[badgeText[2]]);
-  if (language === 'ta') {
-    let match = trim.match(/^Today: ([\d,.]+) ml logged$/);
-    if (match) return value.replace(trim, 'இன்று: ' + match[1] + ' மி.லி. பதிவு');
-    match = trim.match(/^· today: ([\d,.]+) kcal$/);
-    if (match) return value.replace(trim, '· இன்று: ' + match[1] + ' கலோரி');
-    match = trim.match(/^([\d,.]+) min(?: · ([\d,.]+) reps)?$/);
-    if (match) return value.replace(trim, match[1] + ' நிமிடம்' + (match[2] ? ' · ' + match[2] + ' முறை' : ''));
-    match = trim.match(/^([\d,.]+) kcal$/);
-    if (match) return value.replace(trim, match[1] + ' கலோரி');
-    match = trim.match(/^([\d,.]+) ml$/);
-    if (match) return value.replace(trim, match[1] + ' மி.லி.');
-    match = trim.match(/^([\d,.]+) kg$/);
-    if (match) return value.replace(trim, match[1] + ' கி.கி.');
-    match = trim.match(/^BMI · (Underweight|Normal|Overweight|Obese)$/);
-    if (match) return value.replace(trim, 'உடல் நிறை குறியீடு · ' + tamilText[match[1]]);
-  } else {
-    let match = trim.match(/^இன்று: ([\d,.]+) மி.லி. பதிவு$/);
-    if (match) return value.replace(trim, 'Today: ' + match[1] + ' ml logged');
-    match = trim.match(/^· இன்று: ([\d,.]+) கலோரி$/);
-    if (match) return value.replace(trim, '· today: ' + match[1] + ' kcal');
-    match = trim.match(/^([\d,.]+) நிமிடம்(?: · ([\d,.]+) முறை)?$/);
-    if (match) return value.replace(trim, match[1] + ' min' + (match[2] ? ' · ' + match[2] + ' reps' : ''));
-    match = trim.match(/^([\d,.]+) கலோரி$/);
-    if (match) return value.replace(trim, match[1] + ' kcal');
-    match = trim.match(/^([\d,.]+) மி.லி.$/);
-    if (match) return value.replace(trim, match[1] + ' ml');
-    match = trim.match(/^([\d,.]+) கி.கி.$/);
-    if (match) return value.replace(trim, match[1] + ' kg');
-    match = trim.match(/^உடல் நிறை குறியீடு · (குறைந்த எடை|சாதாரணம்|அதிக எடை|உடல் பருமன்)$/);
-    if (match) return value.replace(trim, 'BMI · ' + englishText[match[1]]);
-  }
-  return value;
-}
-function translateSubtree(root) {
-  if (root.nodeType === Node.TEXT_NODE) {
-    const translated = translateText(root.nodeValue);
-    if (translated !== root.nodeValue) root.nodeValue = translated;
-    return;
-  }
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  let node;
-  while ((node = walker.nextNode())) {
-    const translated = translateText(node.nodeValue);
-    if (translated !== node.nodeValue) node.nodeValue = translated;
-  }
-  if (root.nodeType === Node.ELEMENT_NODE) {
-    for (const element of [root, ...root.querySelectorAll('*')]) {
-      for (const attr of ['placeholder', 'aria-label', 'title', 'data-coach-question', 'label']) {
-        if (element.hasAttribute(attr)) {
-          const translated = translateText(element.getAttribute(attr));
-          if (translated !== element.getAttribute(attr)) element.setAttribute(attr, translated);
-        }
-      }
-    }
-  }
-}
-function setLanguage(language) {
-  appLanguage = language === 'ta' ? 'ta' : 'en';
-  localStorage.setItem('fittrack_language', appLanguage);
-  document.documentElement.lang = appLanguage;
-  document.title = appLanguage === 'ta' ? 'AI FitTrack — உடற்தகுதி வழிகாட்டி' : 'AI FitTrack — Your fitness, in rhythm';
-  updateDailyMotivation();
-  translateSubtree(document.body);
-  $('#language-toggle').textContent = appLanguage === 'ta' ? 'English' : 'தமிழ்';
-  $('#language-toggle').setAttribute('aria-label', appLanguage === 'ta' ? 'Switch to English' : 'தமிழுக்கு மாற்று');
-}
-const dailyMotivations = {
-  en: [
-    'Small steps today build a stronger you.',
-    'Show up for yourself—one workout at a time.',
-    'Progress beats perfection. Keep moving.',
-    'Your pace is perfect. Just keep going.',
-    'Consistency is your superpower.',
-    'Rest, reset, and come back stronger.',
-    'You’re doing better than you think.'
-  ],
-  ta: [
-    'இன்றைய சிறிய முயற்சி, நாளைய வலிமையான உங்களை உருவாக்கும்.',
-    'ஒவ்வொரு பயிற்சியிலும் உங்களுக்காக நேரம் ஒதுக்குங்கள்.',
-    'முழுமையை விட முன்னேற்றமே முக்கியம். தொடர்ந்து நகருங்கள்.',
-    'உங்கள் வேகம் சரியானது. தொடர்ந்து செல்லுங்கள்.',
-    'தொடர்ச்சியாக முயற்சி செய்வதே உங்கள் பலம்.',
-    'ஓய்வெடுத்து, புத்துணர்ச்சியுடன் மீண்டும் தொடங்குங்கள்.',
-    'நீங்கள் நினைப்பதைவிட நன்றாக முன்னேறுகிறீர்கள்.'
-  ]
-};
-function updateDailyMotivation() {
-  const quote = $('#daily-quote'), label = $('#motivation-label');
-  if (!quote || !label) return;
-  const day = new Date().getDay();
-  quote.textContent = dailyMotivations[appLanguage][day];
-  label.textContent = appLanguage === 'ta' ? 'இன்றைய ஊக்கம்' : "TODAY'S MOTIVATION";
-}
-$('#language-toggle').onclick = () => {
-  setLanguage(appLanguage === 'ta' ? 'en' : 'ta');
-  if (user) renderConsistency(latestWorkoutEntries);
-};
-setLanguage(appLanguage);
-new MutationObserver(records => records.forEach(record => {
-  if (record.type === 'characterData') translateSubtree(record.target);
-  if (record.type === 'childList') record.addedNodes.forEach(node => translateSubtree(node));
-  if (record.type === 'attributes') translateSubtree(record.target);
-})).observe(document.body, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'aria-label', 'title', 'data-coach-question', 'label']});
-let user = null, token = localStorage.getItem('fittrack_token'), latestWorkoutEntries = [];
+let user = null, token = localStorage.getItem('fittrack_token'), workoutHistory = [];
 
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.style.display = 'block';
@@ -519,11 +186,15 @@ $('#f-user').onsubmit = safe(async f => signedIn(await api('/users', 'POST', for
 $('#f-login').onsubmit = safe(async f => signedIn(await api('/auth/login', 'POST', formData(f))));
 
 // ---------- tabs ----------
-$('#tabs').onclick = e => {
-  const tab = e.target.dataset.tab; if (!tab) return;
-  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === e.target));
+function showTab(tab) {
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('hide', t.id !== 't-' + tab));
-};
+  if (tab === 'history') renderWorkoutHistory();
+}
+document.addEventListener('click', e => {
+  const button = e.target.closest('[data-tab]');
+  if (button) showTab(button.dataset.tab);
+});
 
 // ---------- lists ----------
 const row = (title, right, sub, del = '') =>
@@ -535,7 +206,7 @@ const FOODS = {'Idli (2 pieces)':130,'Dosa (1 plain)':150,'Vada (1)':150,'Pongal
   'Poori (2)':300,'Chapati (1)':100,'Parotta (1)':260,'Plain rice (1 cup)':200,'Curd rice (1 cup)':250,
   'Sambar (1 bowl)':100,'Half veg meal':500,'Full veg meal':700,'Chicken curry (1 bowl)':250,'Chicken biryani (1 plate)':550,
   'Sundal (1 bowl)':150,'Egg (boiled, 1)':80,'Banana (1)':100,'Filter coffee':80,'Tea with milk and sugar':70};
-$('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${esc(n)}" label="${esc(appLanguage === 'ta' ? (tamilText[n] || n) : n)}">`).join('');
+$('#foods').innerHTML = Object.keys(FOODS).map(n => `<option value="${n}">`).join('');
 $('#f-meal').elements.food_name.addEventListener('input', e => {
   if (FOODS[e.target.value]) $('#f-meal').elements.calories.value = FOODS[e.target.value];
 });
@@ -543,26 +214,22 @@ $('#f-meal').elements.food_name.addEventListener('input', e => {
 // Delete buttons (works for both workouts and meals)
 document.addEventListener('click', async e => {
   const b = e.target.closest('.del'); if (!b) return;
-  if (!confirm(appLanguage === 'ta' ? 'இந்த பதிவை நீக்கவா?' : 'Delete this entry?')) return;
+  if (!confirm('Delete this entry?')) return;
   try { await api(`/users/${user.id}/${b.dataset.kind}/${b.dataset.id}`, 'DELETE'); await refresh(); }
   catch (err) { toast(err.message); }
 });
 
 async function refresh() {
   const id = user.id;
-  const [w, m, p, water] = await Promise.all([
-    api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`), api(`/users/${id}/water`)
-  ]);
+  const [w, m, p] = await Promise.all([api(`/users/${id}/workouts`), api(`/users/${id}/meals`), api(`/users/${id}/progress`)]);
 
-  latestWorkoutEntries = w;
-  $('#l-workouts').innerHTML = w.map(x => row(x.exercise_name, x.duration_minutes + ' min' + (x.reps ? ' · ' + x.reps + ' reps' : ''), x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
-  renderConsistency(w);
+  workoutHistory = w;
+  $('#l-workouts').innerHTML = w.slice(0, 3).map(x => row(x.exercise_name, x.duration_minutes + ' min', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))).join('') || '<p class="muted">No workouts yet.</p>';
+  $('#view-full-history').classList.toggle('hide', w.length <= 3);
+  renderWorkoutHistory();
   $('#l-meals').innerHTML = m.map(x => row(x.food_name, x.calories + ' kcal', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('meals', x.id))).join('') || '<p class="muted">No meals yet.</p>';
   const kcal = m.filter(x => x.date === today()).reduce((s, x) => s + x.calories, 0);
   $('#today-cal').textContent = `· today: ${kcal} kcal`;
-  const waterToday = water.filter(x => x.date === today()).reduce((s, x) => s + x.amount_ml, 0);
-  $('#today-water').textContent = `Today: ${waterToday} ml logged`;
-  $('#l-water').innerHTML = water.map(x => row(x.amount_ml + ' ml', '', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('water', x.id))).join('') || '<p class="muted">No water entries yet.</p>';
 
   const s = p.summary, sign = s.change_kg > 0 ? '+' : '';
   const bmi = (s.current_weight_kg / (user.height_cm / 100) ** 2).toFixed(1);
@@ -577,84 +244,41 @@ async function refresh() {
     ${p.history.slice().reverse().map(x => row(x.weight_kg + ' kg', '', x.date)).join('')}`;
 }
 
-function weekKey(dateText) {
-  const date = new Date(`${dateText}T00:00:00Z`);
-  date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
-  return date.toISOString().slice(0, 10);
-}
+function renderWorkoutHistory() {
+  if (!$('#l-history')) return;
+  const totalMinutes = workoutHistory.reduce((sum, x) => sum + Number(x.duration_minutes || 0), 0);
+  const activeDays = new Set(workoutHistory.map(x => x.date)).size;
+  $('#history-total').textContent = workoutHistory.length;
+  $('#history-minutes').textContent = totalMinutes;
+  $('#history-days').textContent = activeDays;
 
-function shiftWeek(week, amount) {
-  const date = new Date(`${week}T00:00:00Z`);
-  date.setUTCDate(date.getUTCDate() + amount * 7);
-  return date.toISOString().slice(0, 10);
-}
-
-function renderConsistency(workouts) {
-  const activeDates = [...new Set(workouts.map(x => x.date))];
-  const activeSet = new Set(activeDates);
-  const target = Math.max(1, Number(user.workout_days_per_week) || 3);
-  const todayText = today(), currentDate = new Date(`${todayText}T00:00:00`);
-  const thisWeek = weekKey(todayText);
-  const byWeek = {};
-  activeDates.forEach(date => { const key = weekKey(date); byWeek[key] = (byWeek[key] || 0) + 1; });
-  const thisWeekCount = byWeek[thisWeek] || 0;
-
-  // An unfinished current week does not break the completed-week streak.
-  let week = thisWeekCount >= target ? thisWeek : shiftWeek(thisWeek, -1);
-  let streak = 0;
-  while (streak < 52 && (byWeek[week] || 0) >= target) {
-    streak += 1;
-    week = shiftWeek(week, -1);
+  const query = ($('#history-search').value || '').trim().toLowerCase();
+  const direction = $('#history-sort').value;
+  const matches = workoutHistory.filter(x => `${x.exercise_name} ${x.notes || ''}`.toLowerCase().includes(query));
+  matches.sort((a, b) => direction === 'oldest'
+    ? a.date.localeCompare(b.date) || a.id - b.id
+    : b.date.localeCompare(a.date) || b.id - a.id);
+  $('#history-match').textContent = `Showing ${matches.length} of ${workoutHistory.length} saved workouts`;
+  if (!matches.length) {
+    $('#l-history').innerHTML = `<p class="muted history-empty">${workoutHistory.length ? 'No workouts match your search.' : 'No workouts saved yet. Add a workout in the Workouts tab and it will appear here.'}</p>`;
+    return;
   }
-
-  const dateKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  let streakDate = new Date(currentDate), dayStreak = 0;
-  if (!activeSet.has(todayText)) streakDate.setDate(streakDate.getDate() - 1);
-  while (activeSet.has(dateKey(streakDate)) && dayStreak < activeDates.length) {
-    dayStreak += 1;
-    streakDate.setDate(streakDate.getDate() - 1);
+  const groups = new Map();
+  for (const item of matches) {
+    const month = item.date.slice(0, 7);
+    if (!groups.has(month)) groups.set(month, []);
+    groups.get(month).push(item);
   }
-
-  const locale = appLanguage === 'ta' ? 'ta-IN' : 'en-IN';
-  const monthTitle = new Intl.DateTimeFormat(locale, {month: 'long', year: 'numeric'}).format(currentDate);
-  const weekdays = Array.from({length: 7}, (_, i) => new Intl.DateTimeFormat(locale, {weekday: 'short'}).format(new Date(Date.UTC(2024, 0, i + 1))));
-  const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const offset = (monthStart.getDay() + 6) % 7;
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const calendarSlots = Math.ceil((offset + daysInMonth) / 7) * 7;
-  const calendarCells = Array.from({length: calendarSlots}, (_, index) => {
-    const day = index - offset + 1;
-    if (day < 1 || day > daysInMonth) return '<span class="calendar-day empty" aria-hidden="true"></span>';
-    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    const key = dateKey(date), active = activeSet.has(key), isToday = key === todayText;
-    const label = new Intl.DateTimeFormat(locale, {dateStyle: 'full'}).format(date);
-    const workoutLabel = appLanguage === 'ta' ? ' · பயிற்சி நாள்' : ' · Workout day';
-    return `<span class="calendar-day${active ? ' active' : ''}${isToday ? ' today' : ''}"${isToday ? ' aria-current="date"' : ''} title="${esc(label)}" aria-label="${esc(label)}${active ? workoutLabel : ''}">${new Intl.NumberFormat(locale, {useGrouping: false}).format(day)}</span>`;
+  $('#l-history').innerHTML = [...groups.entries()].map(([month, items]) => {
+    const monthLabel = new Date(month + '-01T12:00:00').toLocaleDateString(undefined, {month: 'long', year: 'numeric'});
+    return `<h3 class="history-month">${esc(monthLabel)}</h3>` + items.map(x =>
+      row(x.exercise_name, x.duration_minutes + ' min', x.date + (x.notes ? ' · ' + x.notes : ''), delBtn('workouts', x.id))
+    ).join('');
   }).join('');
-
-  const badges = [
-    {label: 'First workout', earned: activeDates.length >= 1},
-    {label: '5 active days', earned: activeDates.length >= 5},
-    {label: '10 active days', earned: activeDates.length >= 10},
-    {label: '25 active days', earned: activeDates.length >= 25},
-    {label: 'Weekly goal reached', earned: thisWeekCount >= target},
-  ];
-  const percent = Math.min(100, Math.round(thisWeekCount / target * 100));
-  $('#workout-consistency').innerHTML = `
-    <div class="stats">
-      <div class="stat"><b>${thisWeekCount}/${target}</b>This week</div>
-      <div class="stat"><b>${streak}</b>Completed weeks in a row</div>
-      <div class="stat"><b>${activeDates.length}</b>Active days total</div>
-      <div class="stat"><b>${dayStreak}</b>Current day streak</div>
-    </div>
-    <div class="progress-track" aria-label="Weekly goal progress"><div class="progress-fill" style="width:${percent}%"></div></div>
-    <div class="badge-list">${badges.map(b => `<span class="achievement ${b.earned ? 'unlocked' : 'locked'}">${b.earned ? '🏅' : '🔒'} ${b.label}</span>`).join('')}</div>
-    <section class="streak-calendar" aria-label="Workout calendar">
-      <div class="calendar-top"><strong>${esc(monthTitle)}</strong><span class="calendar-legend"><i class="calendar-legend-dot"></i>Workout day</span></div>
-      <div class="calendar-grid">${weekdays.map(name => `<span class="calendar-weekday">${esc(name)}</span>`).join('')}${calendarCells}</div>
-    </section>
-    <p class="muted">Counts workout days against your weekly goal. Rest days are expected.</p>`;
 }
+
+$('#history-search').addEventListener('input', renderWorkoutHistory);
+$('#history-sort').addEventListener('change', renderWorkoutHistory);
 
 // Small line chart drawn with SVG
 function chart(h) {
@@ -665,198 +289,24 @@ function chart(h) {
 }
 
 // ---------- forms ----------
-let workoutSoundContext = null;
-function prepareWorkoutSuccessSound() {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) return;
-  try {
-    workoutSoundContext ||= new AudioContextClass();
-    if (workoutSoundContext.state === 'suspended') workoutSoundContext.resume().catch(() => {});
-  } catch (_) { workoutSoundContext = null; }
-}
-async function playWorkoutSuccessSound() {
-  if (!workoutSoundContext) return;
-  try {
-    if (workoutSoundContext.state === 'suspended') await workoutSoundContext.resume();
-    if (workoutSoundContext.state !== 'running') return;
-    [523.25, 659.25, 783.99].forEach((frequency, index) => {
-      const start = workoutSoundContext.currentTime + index * 0.12;
-      const tone = workoutSoundContext.createOscillator();
-      const volume = workoutSoundContext.createGain();
-      tone.type = 'sine';
-      tone.frequency.setValueAtTime(frequency, start);
-      volume.gain.setValueAtTime(0.0001, start);
-      volume.gain.exponentialRampToValueAtTime(0.12, start + 0.025);
-      volume.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
-      tone.connect(volume); volume.connect(workoutSoundContext.destination);
-      tone.start(start); tone.stop(start + 0.3);
-    });
-  } catch (_) { /* Sound is optional; never interrupt saving a workout. */ }
-}
 const submitTo = (path, after) => safe(async f => {
   await api(`/users/${user.id}/${path}`, 'POST', formData(f));
   f.reset(); f.querySelectorAll('input[type=date]').forEach(i => i.value = today());
-  if (after) await after();
-  await refresh();
+  await refresh(); if (after) after();
 });
-$('#f-workout').addEventListener('submit', prepareWorkoutSuccessSound, {capture: true});
-$('#f-workout').onsubmit = submitTo('workouts', playWorkoutSuccessSound);
+$('#f-workout').onsubmit = submitTo('workouts');
 $('#f-meal').onsubmit = submitTo('meals');
-$('#f-water').onsubmit = submitTo('water');
 $('#f-weight').onsubmit = submitTo('weight');
 
-const spokenNumbers = {zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, 'ஒன்று': 1, 'ஒரு': 1, 'இரண்டு': 2, 'மூன்று': 3, 'நான்கு': 4, 'ஐந்து': 5, 'ஆறு': 6, 'ஏழு': 7, 'எட்டு': 8, 'ஒன்பது': 9, 'பத்து': 10, 'பதினொன்று': 11, 'பன்னிரண்டு': 12, 'பதின்மூன்று': 13, 'பதினான்கு': 14, 'பதினைந்து': 15, 'பதினாறு': 16, 'பதினேழு': 17, 'பதினெட்டு': 18, 'பத்தொன்பது': 19, 'இருபது': 20};
-const numberPattern = '(?:\\d+|' + Object.keys(spokenNumbers).join('|') + ')';
-function spokenNumber(value) { return /^\d+$/.test(value) ? Number(value) : spokenNumbers[value.toLowerCase()]; }
-function parseWorkoutSpeech(transcript) {
-  let text = transcript.toLowerCase().replace(/[,.!?]/g, ' ').replace(/\s+/g, ' ').trim();
-  const durationUnits = '(?:minutes?|mins?|நிமிடங்கள்?|நிமிடம்)';
-  const durationMatch = text.match(new RegExp('(?:^|\\s)(?:(?:in|for)\\s+)?(' + numberPattern + ')\\s+' + durationUnits + '(?:\\s|$)', 'i'));
-  const duration = durationMatch ? spokenNumber(durationMatch[1]) : null;
-  if (durationMatch) text = text.replace(durationMatch[0], ' ');
-  text = text.replace(/^(?:(?:i\s+)?(?:have\s+)?(?:just\s+)?(?:did|completed|finished|logged|performed)\s+|நான்\s+(?:இன்று\s+)?)/i, '')
-    .replace(/\s*(?:செய்தேன்|முடித்தேன்|பயிற்சி செய்தேன்)$/i, '')
-    .replace(/\b(today|this morning|this afternoon|this evening)\b/g, '').replace(/\s+/g, ' ').trim();
-  let reps = null;
-  let match = text.match(new RegExp('^(' + numberPattern + ')\\s+(?:reps?\\s+(?:of\\s+)?)?(.+)$', 'i'));
-  if (match) { reps = spokenNumber(match[1]); text = match[2]; }
-  else {
-    match = text.match(new RegExp('^(.+?)\\s+(' + numberPattern + ')\\s+reps?$', 'i'));
-    if (match) { text = match[1]; reps = spokenNumber(match[2]); }
-  }
-  const exercise = text.replace(/^(?:of|for|in)\s+/i, '').replace(/\s+/g, ' ').trim();
-  if (!exercise) throw new Error('Exercise name wasn’t clear. Try saying “I did 10 pushups in 5 minutes”.');
-  return {exercise, reps, duration};
-}
-
-$('#voice-workout').onclick = () => {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) { $('#voice-status').textContent = 'Voice entry needs a supported browser such as Chrome or Edge.'; return; }
-  const button = $('#voice-workout'), status = $('#voice-status');
-  const recognition = new SpeechRecognition();
-  recognition.lang = appLanguage === 'ta' ? 'ta-IN' : 'en-IN'; recognition.interimResults = false; recognition.maxAlternatives = 1;
-  const listeningText = appLanguage === 'ta' ? 'கேட்கிறது… பயிற்சி, முறை எண்ணிக்கை, நேரத்தைச் சொல்லுங்கள்.' : 'Listening… say your exercise, reps, and time.';
-  const noSpeechText = appLanguage === 'ta' ? 'குரல் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.' : 'No speech heard. Tap and try again.';
-  recognition.onstart = () => { button.disabled = true; status.textContent = listeningText; };
-  recognition.onresult = event => {
-    const transcript = event.results[0][0].transcript;
-    try {
-      const result = parseWorkoutSpeech(transcript), form = $('#f-workout');
-      form.elements.exercise_name.value = result.exercise;
-      if (result.reps !== null) form.elements.reps.value = result.reps;
-      if (result.duration !== null) form.elements.duration_minutes.value = result.duration;
-      status.textContent = appLanguage === 'ta' ? 'கேட்டது: “' + transcript + '” — புலங்களைச் சரிபார்த்து பயிற்சியைச் சேர்க்கவும்.' : 'Heard: “' + transcript + '” — review the fields, then tap Add workout.';
-    } catch (error) { status.textContent = error.message; }
-  };
-  recognition.onerror = event => {
-    status.textContent = event.error === 'not-allowed'
-      ? (appLanguage === 'ta' ? 'Browser-ல் microphone அனுமதி கொடுத்து மீண்டும் முயற்சிக்கவும்.' : 'Allow microphone access in your browser, then try again.')
-      : (appLanguage === 'ta' ? 'தெளிவாகக் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.' : 'Couldn’t hear that clearly. Tap and try once more.');
-  };
-  recognition.onend = () => { button.disabled = false; if (status.textContent === listeningText) status.textContent = noSpeechText; };
-  try { recognition.start(); } catch (_) { button.disabled = false; status.textContent = 'Microphone is busy. Try again in a moment.'; }
-};
-
-$('#f-meal-plan').onsubmit = safe(async f => {
-  const button = f.querySelector('button');
-  button.disabled = true; button.textContent = 'Generating…';
-  try {
-    const avoid = [...f.querySelectorAll('input[name="avoid"]:checked')].map(input => input.value).join(',') || 'none';
-    const instructions = `diet=${f.elements.diet.value}; cuisine=${f.elements.cuisine.value}; avoid=${avoid}`;
-    const result = await api(`/users/${user.id}/meal-plan`, 'POST', {instructions});
-    const label = result.is_ai_generated ? 'AI plan from your instructions' : 'Sample plan (AI provider not configured)';
-    $('#meal-plan-result').innerHTML = `<span class="badge">${label}</span>` +
-      result.plan.meals.map(meal => `<div class="day"><b>${esc(meal.time)}</b><div>${esc(meal.name)}</div><div class="muted">${esc(meal.description || '')}</div></div>`).join('') +
-      `<p class="muted">${esc(result.plan.note || '')}</p>`;
-  } finally { button.disabled = false; button.textContent = 'Generate day plan'; }
-});
-
 // ---------- workout plan ----------
-const exerciseAlternatives = {
-  leg_press: {
-    bodyweight: ['Bodyweight squats', 'Reverse lunges', 'Wall sit'],
-    home: ['Dumbbell goblet squats', 'Resistance-band squats', 'Step-ups'],
-    gym: ['Dumbbell split squats', 'Hack squat', 'Barbell squats']
-  },
-  chest_press: {
-    bodyweight: ['Incline push-ups', 'Knee push-ups', 'Standard push-ups'],
-    home: ['Dumbbell floor press', 'Resistance-band chest press', 'Incline push-ups'],
-    gym: ['Dumbbell bench press', 'Cable chest press', 'Pec deck machine']
-  },
-  lat_pulldown: {
-    bodyweight: ['Reverse snow angels', 'Superman pulls', 'Prone Y-T raises'],
-    home: ['Resistance-band pulldowns', 'One-arm band rows', 'Dumbbell rows'],
-    gym: ['Seated cable rows', 'Assisted pull-ups', 'Chest-supported rows']
-  },
-  leg_curl: {
-    bodyweight: ['Glute bridges', 'Single-leg glute bridges', 'Towel hamstring curls'],
-    home: ['Stability-ball leg curls', 'Dumbbell Romanian deadlifts', 'Towel hamstring curls'],
-    gym: ['Romanian deadlifts', 'Cable pull-throughs', 'Hip thrusts']
-  },
-  shoulder_press: {
-    bodyweight: ['Pike push-ups', 'Wall push-ups', 'Plank shoulder taps'],
-    home: ['Dumbbell shoulder press', 'Band shoulder press', 'Dumbbell lateral raises'],
-    gym: ['Landmine press', 'Seated dumbbell press', 'Shoulder-press machine']
-  },
-  treadmill: {
-    bodyweight: ['Brisk outdoor walk', 'Step-ups', 'Marching in place'],
-    home: ['Jump rope', 'Stationary-bike ride', 'Stair climbing'],
-    gym: ['Elliptical trainer', 'Stationary bike', 'Rowing machine']
-  }
-};
-$('#find-alternative').onclick = () => {
-  const equipment = $('#plan-equipment').value;
-  const names = exerciseAlternatives[$('#busy-exercise').value][equipment];
-  const optionsLabel = appLanguage === 'ta' ? ' உபகரணத்திற்கான மாற்றுகள்' : ' options';
-  $('#alternative-result').innerHTML = `<span class="badge">${esc($('#plan-equipment').selectedOptions[0].textContent)}${optionsLabel}</span>` +
-    names.map((name, index) => `<div class="alternative-option"><span class="alternative-number">${index + 1}</span><b>${esc(name)}</b></div>`).join('') +
-    '<p class="muted">Pick one that feels comfortable and use a manageable effort.</p>';
-};
-
-let coachHistory = [];
-function addCoachMessage(role, message, source) {
-  const bubble = document.createElement('div');
-  bubble.className = `coach-message ${role === 'user' ? 'coach-user' : 'coach-assistant'}`;
-  const label = document.createElement('span'); label.className = 'coach-label';
-  label.textContent = role === 'user' ? 'YOU' : source === 'ai' ? 'AI COACH' : 'QUICK COACH';
-  const content = document.createElement('div'); content.textContent = message;
-  bubble.append(label, content); $('#coach-messages').appendChild(bubble);
-  $('#coach-messages').scrollTop = $('#coach-messages').scrollHeight;
-}
-
-document.querySelectorAll('[data-coach-question]').forEach(button => {
-  button.onclick = () => { $('#coach-input').value = button.dataset.coachQuestion; $('#coach-form').requestSubmit(); };
-});
-
-$('#coach-form').onsubmit = async event => {
-  event.preventDefault();
-  const input = $('#coach-input'), button = $('#coach-send'), status = $('#coach-status');
-  const message = input.value.trim();
-  if (!message) return;
-  addCoachMessage('user', message);
-  button.disabled = true; button.textContent = 'Thinking…'; status.textContent = 'Coach is preparing a reply…';
-  try {
-    const result = await api(`/users/${user.id}/coach`, 'POST', {message, history: coachHistory.slice(-8), language: appLanguage});
-    addCoachMessage('assistant', result.reply, result.source);
-    coachHistory.push({role: 'user', content: message}, {role: 'assistant', content: result.reply});
-    coachHistory = coachHistory.slice(-8);
-    input.value = ''; status.textContent = result.source === 'ai' ? 'AI-powered reply' : 'Free built-in guidance';
-  } catch (error) {
-    toast(error.message); status.textContent = 'Could not reach the coach. Check your connection and try again.';
-  } finally { button.disabled = false; button.textContent = 'Ask coach'; input.focus(); }
-};
-
 $('#gen').onclick = async () => {
   $('#gen').disabled = true; $('#gen').textContent = 'Generating…';
   try {
-    const d = await api(`/users/${user.id}/workout-plan`, 'POST', {
-      duration_minutes: Number($('#plan-duration').value),
-      equipment: $('#plan-equipment').value
-    });
+    const d = await api(`/users/${user.id}/workout-plan`, 'POST');
     const label = d.is_ai_generated ? 'AI-generated plan' : 'Sample plan (no AI provider configured)';
     $('#plan').innerHTML = `<span class="badge">${label}</span>` + d.plan.days.map(day => `
-      <div class="day"><b>${esc(day.day)}</b> · <span>${esc(day.focus)}</span>${day.duration_minutes ? ` · ${esc(day.duration_minutes)} min` : ''}
-      ${day.exercises.map(x => `<div class="muted"><span>${esc(x.name)}</span> — ${esc(x.sets)} × ${esc(x.reps)}</div>`).join('')}</div>`).join('');
+      <div class="day"><b>${esc(day.day)}</b> · ${esc(day.focus)}
+      ${day.exercises.map(x => `<div class="muted">${esc(x.name)} — ${esc(x.sets)} × ${esc(x.reps)}</div>`).join('')}</div>`).join('');
   } catch (err) { toast(err.message); }
   $('#gen').disabled = false; $('#gen').textContent = 'Generate plan';
 };
